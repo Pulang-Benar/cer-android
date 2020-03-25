@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
         icInstagram.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String url = "https://www.instagram.com/mercubuanahits";
+                String url = "https://instagram.com/kelaskaryawan_mercubuana";
                 Intent i = new Intent(Intent.ACTION_VIEW);
                 i.setData(Uri.parse(url));
                 startActivity(i);
