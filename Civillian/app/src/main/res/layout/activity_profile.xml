@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    tools:context=".activity.RegisterActivity"
+    tools:context=".activity.ProfileActivity"
     android:orientation="vertical"
     android:gravity="center_horizontal">
 
@@ -231,12 +231,12 @@
                     android:id="@+id/bt_simpan"
                     android:text="Simpan"
                     android:backgroundTint="@color/colorPrimary"
+                    android:textColor="@color/white"
                     android:textAllCaps="false"
                     android:fontFamily="sans-serif-condensed-light"
                     android:textSize="11dp"
                     android:layout_centerVertical="true"
                     android:layout_toRightOf="@id/bt_kembali"/>
-
             </RelativeLayout>
 
             <TextView

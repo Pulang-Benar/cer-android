@@ -54,7 +54,8 @@
         android:layout_marginTop="10dp"
         android:textAllCaps="false"
         android:fontFamily="sans-serif-condensed-light"
-        android:textSize="11dp"/>
+        android:textSize="11dp"
+        android:textColor="@color/white"/>
     <TextView
         android:id="@+id/tv_login_help"
         android:layout_width="wrap_content"

@@ -208,6 +208,7 @@
                 android:id="@+id/bt_register"
                 android:text="Daftar"
                 android:backgroundTint="@color/colorPrimary"
+                android:textColor="@color/white"
                 android:layout_marginTop="4dp"
                 android:textAllCaps="false"
                 android:fontFamily="sans-serif-condensed-light"
