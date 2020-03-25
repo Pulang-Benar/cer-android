@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".activity.HomeActivity"
+    android:orientation="vertical">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_above="@+id/footer">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <TextView
+                android:text="CIVILLIAN\nEMERGENCY REPORT"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:textSize="25sp"
+                android:textColor="@color/black"
+                android:textStyle="bold"
+                android:fontFamily="sans-serif-condensed-light"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_horizontal"
+                android:paddingTop="10dp">
+                <ImageView
+                    android:id="@+id/ic_profile"
+                    android:src="@drawable/ic_profile"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:scaleType="fitXY"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/black"
+                    android:text="Ginanjar Sanjaya\n3578132109920001"
+                    android:textSize="11dp"
+                    android:fontFamily="sans-serif-condensed-light"
+                    android:paddingLeft="7dp"
+                    android:paddingTop="5dp"/>
+            </LinearLayout>
+            <ImageButton
+                android:id="@+id/bt_emergency"
+                android:layout_width="300dp"
+                android:layout_height="300dp"
+                android:padding="50dp"
+                android:scaleType="fitXY"
+                android:layout_gravity="center"
+                android:layout_marginTop="40dp"
+                android:src="@drawable/ic_help"
+                android:background="@drawable/round_image"
+                android:tint="@color/white"/>
+        </LinearLayout>
+    </ScrollView>
+
+
+    <LinearLayout
+        android:id="@+id/footer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical" >
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Follow us:"
+            android:textColor="@color/black"
+            android:textSize="9dp"
+            android:fontFamily="sans-serif-condensed-light"
+            android:textAlignment="center"/>
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:gravity="center"
+            android:paddingTop="3dp">
+            <ImageView
+                android:id="@+id/ic_instagram"
+                android:src="@drawable/ic_instagram"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:scaleType="fitXY"/>
+            <ImageView
+                android:id="@+id/ic_facebook"
+                android:src="@drawable/ic_facebook"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:scaleType="fitXY"/>
+            <ImageView
+                android:id="@+id/ic_twitter"
+                android:src="@drawable/ic_twitter"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:scaleType="fitXY"/>
+        </LinearLayout>
+    </LinearLayout>
+</RelativeLayout>

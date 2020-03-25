@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Civillian Emergency</string>
+    <string-array name="gender_arrays">
+        <item>Laki - laki</item>
+        <item>Perempuan</item>
+    </string-array>
+</resources>

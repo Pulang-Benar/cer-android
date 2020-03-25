@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".activity.LoginActivity"
+    android:orientation="vertical"
+    android:gravity="center_horizontal">
+
+    <TextView
+        android:text="CIVILLIAN\nEMERGENCY REPORT"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:textSize="25sp"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        android:fontFamily="sans-serif-condensed-light"
+        android:layout_marginTop="50dp"/>
+    <EditText
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:inputType="text"
+        android:id="@+id/tf_username"
+        android:hint="Email atau nomer ktp"
+        android:layout_marginTop="40dp"
+        android:textAlignment="textStart"
+        android:fontFamily="sans-serif-condensed-light"
+        android:textSize="11dp"/>
+    <EditText
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:inputType="textPassword"
+        android:id="@+id/tf_password"
+        android:hint="Kata sandi"
+        android:layout_marginTop="5dp"
+        android:textAlignment="textStart"
+        android:fontFamily="sans-serif-condensed-light"
+        android:textSize="11dp"/>
+    <CheckBox
+        android:id="@+id/show_password"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:text="Show password"
+        android:textSize="9dp"/>
+    <Button
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/bt_login"
+        android:text="Masuk"
+        android:backgroundTint="@color/colorPrimary"
+        android:layout_marginTop="10dp"
+        android:textAllCaps="false"
+        android:fontFamily="sans-serif-condensed-light"
+        android:textSize="11dp"/>
+    <TextView
+        android:id="@+id/tv_login_help"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:textColor="@color/black"
+        android:textSize="9dp"
+        android:fontFamily="sans-serif-condensed-light"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginTop="35dp">
+        <TextView
+            android:id="@+id/tvText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:text="Atau"
+            android:textColor="@color/black"
+            android:textSize="9dp"
+            android:fontFamily="sans-serif-condensed-light"/>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="40dp"
+            android:layout_toLeftOf="@id/tvText"
+            android:background="@android:color/darker_gray"/>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="40dp"
+            android:layout_toRightOf="@id/tvText"
+            android:background="@android:color/darker_gray"/>
+    </RelativeLayout>
+
+
+    <TextView
+        android:id="@+id/tv_register"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:textColor="@color/black"
+        android:textSize="9dp"
+        android:fontFamily="sans-serif-condensed-light"
+        android:layout_marginTop="15dp"/>
+
+
+</LinearLayout>
