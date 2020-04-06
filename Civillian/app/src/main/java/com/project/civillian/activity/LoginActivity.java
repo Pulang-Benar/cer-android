@@ -60,6 +60,15 @@ public class LoginActivity extends AppCompatActivity {
                 return true;
             }
         });
+        tvLoginHelp.setOnTouchListener(new CompoundButton.OnTouchListener(){
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                Intent intent = new Intent(LoginActivity.this, LoginEmailActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                return true;
+            }
+        });
         btLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
