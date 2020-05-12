@@ -15,7 +15,8 @@ public class MainActivity extends AppCompatActivity {
 
     Button btLogin;
     Button btRegister;
-    ImageView icInstagram, icFacebook, icTwitter;
+//    ImageView icInstagram;
+    ImageView icFacebook, icTwitter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
     private void initComponent(){
         btLogin = findViewById(R.id.bt_login);
         btRegister = findViewById(R.id.bt_register);
-        icInstagram = findViewById(R.id.ic_instagram);
+//        icInstagram = findViewById(R.id.ic_instagram);
         icFacebook = findViewById(R.id.ic_facebook);
         icTwitter = findViewById(R.id.ic_twitter);
 
@@ -45,15 +46,15 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-        icInstagram.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String url = "https://instagram.com/kelaskaryawan_mercubuana";
-                Intent i = new Intent(Intent.ACTION_VIEW);
-                i.setData(Uri.parse(url));
-                startActivity(i);
-            }
-        });
+//        icInstagram.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                String url = "https://instagram.com/kelaskaryawan_mercubuana";
+//                Intent i = new Intent(Intent.ACTION_VIEW);
+//                i.setData(Uri.parse(url));
+//                startActivity(i);
+//            }
+//        });
         icFacebook.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

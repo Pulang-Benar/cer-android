@@ -2,7 +2,6 @@ package com.project.civillian.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 import com.project.civillian.R;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Html;

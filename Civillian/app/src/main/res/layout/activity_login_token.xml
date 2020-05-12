@@ -20,7 +20,7 @@
         android:fontFamily="sans-serif-condensed-light"
         android:layout_marginTop="50dp"/>
     <TextView
-        android:text="Validasi Token Reset Password"
+        android:text="Masukkan Kode Verifikasi"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAlignment="center"
@@ -133,7 +133,7 @@
         android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:id="@+id/bt_submit"
-        android:text="Submit"
+        android:text="Verifikasi"
         android:backgroundTint="@color/colorPrimary"
         android:layout_marginTop="10dp"
         android:textAllCaps="false"
@@ -148,7 +148,7 @@
         android:textColor="@color/black"
         android:textSize="9dp"
         android:fontFamily="sans-serif-condensed-light"
-        android:text="Masukkan token yang telah kami kirim pada email Anda"/>
+        android:text="Masukkan kode verifikasi yang telah kami kirim pada email Anda"/>
 
     <RelativeLayout
         android:layout_width="match_parent"

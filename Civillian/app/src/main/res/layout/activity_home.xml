@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -11,99 +11,131 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:layout_above="@+id/footer">
+        android:fillViewport="true">
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="vertical">
-            <TextView
-                android:text="CIVILLIAN\nEMERGENCY REPORT"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textAlignment="center"
-                android:textSize="25sp"
-                android:textColor="@color/black"
-                android:textStyle="bold"
-                android:fontFamily="sans-serif-condensed-light"/>
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_horizontal"
-                android:paddingTop="10dp">
-                <ImageView
-                    android:id="@+id/ic_profile"
-                    android:src="@drawable/ic_profile"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:scaleType="fitXY"/>
+                android:orientation="vertical"
+                android:layout_above="@+id/footer">
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:text="CIVILLIAN\nEMERGENCY REPORT"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:textAlignment="center"
+                    android:textSize="25sp"
                     android:textColor="@color/black"
-                    android:text="Muhammad Ari Purnadi\n3999132374620001"
-                    android:textSize="11dp"
-                    android:fontFamily="sans-serif-condensed-light"
-                    android:paddingLeft="7dp"
-                    android:paddingTop="5dp"/>
+                    android:textStyle="bold"
+                    android:fontFamily="sans-serif-condensed-light"/>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_horizontal"
+                    android:paddingTop="10dp">
+                    <ImageView
+                        android:id="@+id/ic_profile"
+                        android:src="@drawable/ic_profile"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:scaleType="fitXY"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/black"
+                        android:text="Muhammad Ari Purnadi\n3999132374620001"
+                        android:textSize="11dp"
+                        android:fontFamily="sans-serif-condensed-light"
+                        android:paddingLeft="7dp"
+                        android:paddingTop="5dp"/>
+                </LinearLayout>
+                <Button
+                    android:id="@+id/bt_emergency"
+                    android:layout_width="250dp"
+                    android:layout_height="250dp"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="40dp"
+                    android:background="@drawable/btn_round"
+                    android:text="HELP ME"
+                    android:textColor="@color/white"
+                    android:textSize="40dp"
+                    android:textStyle="bold"
+                    android:fontFamily="sans-serif-condensed-light"/>
+
+                <LinearLayout
+                    android:id="@+id/layout_play_sound"
+                    android:layout_width="230dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="10dp"
+                    android:visibility="gone">
+                    <Button
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:id="@+id/bt_play"
+                        android:background="@drawable/bt_play"
+                        android:textAllCaps="false"
+                        android:fontFamily="sans-serif-condensed-light"
+                        android:layout_marginLeft="-10dp"
+                        android:backgroundTint="@color/red"/>
+                    <SeekBar
+                        android:id="@+id/sound_bar"
+                        android:layout_width="230dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="-18dp"/>
+                </LinearLayout>
             </LinearLayout>
-            <Button
-                android:id="@+id/bt_emergency"
-                android:layout_width="250dp"
-                android:layout_height="250dp"
-                android:layout_gravity="center"
-                android:layout_marginTop="40dp"
-                android:background="@drawable/btn_round"
-                android:text="HELP ME"
-                android:textColor="@color/white"
-                android:textSize="40dp"
-                android:textStyle="bold"
-                android:fontFamily="sans-serif-condensed-light"/>
+
+            <LinearLayout
+                android:id="@+id/footer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:orientation="vertical"
+                android:layout_marginTop="50dp">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="Follow us:"
+                    android:textColor="@color/black"
+                    android:textSize="9dp"
+                    android:fontFamily="sans-serif-condensed-light"
+                    android:textAlignment="center"/>
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="3dp"
+                    android:gravity="center"
+                    android:paddingTop="3dp">
+<!--                    <ImageView-->
+<!--                        android:id="@+id/ic_instagram"-->
+<!--                        android:src="@drawable/ic_instagram"-->
+<!--                        android:layout_width="35dp"-->
+<!--                        android:layout_height="35dp"-->
+<!--                        android:scaleType="fitXY"/>-->
+                    <ImageView
+                        android:id="@+id/ic_facebook"
+                        android:src="@drawable/ic_facebook"
+                        android:layout_width="35dp"
+                        android:layout_height="35dp"
+                        android:scaleType="fitXY"/>
+                    <ImageView
+                        android:id="@+id/ic_twitter"
+                        android:src="@drawable/ic_twitter"
+                        android:layout_width="35dp"
+                        android:layout_height="35dp"
+                        android:scaleType="fitXY"/>
+                </LinearLayout>
+            </LinearLayout>
+
         </LinearLayout>
     </ScrollView>
 
-
-    <LinearLayout
-        android:id="@+id/footer"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:orientation="vertical" >
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="Follow us:"
-            android:textColor="@color/black"
-            android:textSize="9dp"
-            android:fontFamily="sans-serif-condensed-light"
-            android:textAlignment="center"/>
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:gravity="center"
-            android:paddingTop="3dp">
-            <ImageView
-                android:id="@+id/ic_instagram"
-                android:src="@drawable/ic_instagram"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
-                android:scaleType="fitXY"/>
-            <ImageView
-                android:id="@+id/ic_facebook"
-                android:src="@drawable/ic_facebook"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
-                android:scaleType="fitXY"/>
-            <ImageView
-                android:id="@+id/ic_twitter"
-                android:src="@drawable/ic_twitter"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
-                android:scaleType="fitXY"/>
-        </LinearLayout>
-    </LinearLayout>
-</RelativeLayout>
+</LinearLayout>

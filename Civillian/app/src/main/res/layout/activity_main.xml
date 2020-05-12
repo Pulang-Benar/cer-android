@@ -80,15 +80,15 @@
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
+            android:layout_marginLeft="3dp"
             android:gravity="center"
             android:paddingTop="3dp">
-            <ImageView
-                android:id="@+id/ic_instagram"
-                android:src="@drawable/ic_instagram"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
-                android:scaleType="fitXY"/>
+<!--            <ImageView-->
+<!--                android:id="@+id/ic_instagram"-->
+<!--                android:src="@drawable/ic_instagram"-->
+<!--                android:layout_width="35dp"-->
+<!--                android:layout_height="35dp"-->
+<!--                android:scaleType="fitXY"/>-->
             <ImageView
                 android:id="@+id/ic_facebook"
                 android:src="@drawable/ic_facebook"
