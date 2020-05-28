@@ -13,13 +13,14 @@ import android.widget.ImageView;
 import android.view.View.OnClickListener;
 import android.app.Activity;
 import android.widget.MediaController;
+import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.project.civillian.R;
 
 public class CameraActivity extends AppCompatActivity {
 
-    private Button btCamera, btVidio;
+    private Button btCamera, btVidio, btSendCamera;
     private ImageView ivCamera;
     private VideoView ivVideo;
     private MediaController myVideoController;
@@ -33,6 +34,7 @@ public class CameraActivity extends AppCompatActivity {
         setContentView(R.layout.activity_camera);
         btCamera = (Button) findViewById(R.id.bt_camera);
         btVidio = (Button) findViewById(R.id.bt_video);
+        btSendCamera = findViewById(R.id.bt_send_camera);
         ivCamera = (ImageView) findViewById(R.id.iv_camera);
         ivVideo = (VideoView) findViewById(R.id.iv_video);
         myVideoController = new MediaController(this);
@@ -53,6 +55,16 @@ public class CameraActivity extends AppCompatActivity {
                 startActivityForResult(intent, VIDEO_REQUEST_CODE);
             }
         });
+        btSendCamera.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getApplicationContext(), "Mengirim bukti rekaman..", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(CameraActivity.this, HomeActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                CameraActivity.this.finish();
+            }
+        });
     }
 
     @Override
@@ -64,6 +76,7 @@ public class CameraActivity extends AppCompatActivity {
 //                    cara get image foto
                     Bitmap bitmap;
                     bitmap = (Bitmap) data.getExtras().get("data");
+                    ivCamera.setVisibility(ImageView.VISIBLE);
                     ivCamera.setImageBitmap(bitmap);
                 }
                 break;
@@ -72,6 +85,7 @@ public class CameraActivity extends AppCompatActivity {
                 if(resultCode == Activity.RESULT_OK) {
 //                    cara get vidio result
                     Uri videoUri = data.getData();
+                    ivVideo.setVisibility(VideoView.VISIBLE);
                     ivVideo.setVideoURI(videoUri);
                 }
                 break;

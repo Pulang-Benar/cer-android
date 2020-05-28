@@ -15,8 +15,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:layout_gravity="center_vertical">
+            android:orientation="vertical">
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -36,7 +35,8 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:gravity="center_horizontal"
-                    android:paddingTop="10dp">
+                    android:paddingTop="10dp"
+                    android:layout_marginBottom="20dp">
                     <ImageView
                         android:id="@+id/ic_profile"
                         android:src="@drawable/ic_profile"
@@ -55,38 +55,53 @@
                 </LinearLayout>
             </LinearLayout>
 
-
             <ImageView
                 android:id="@+id/iv_camera"
-                android:layout_width="200dp"
-                android:layout_height="200dp"
-                android:layout_gravity="center"/>
+                android:layout_width="match_parent"
+                android:layout_height="500dp"
+                android:layout_gravity="center"
+                android:visibility="gone"/>
             <Button
                 android:id="@+id/bt_camera"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="35dp"
                 android:layout_gravity="center"
+                android:backgroundTint="@color/colorPrimary"
                 android:textAllCaps="false"
+                android:fontFamily="sans-serif-condensed-light"
+                android:textSize="11dp"
+                android:textColor="@color/white"
                 android:text="Ambil Gambar" />
             <VideoView
                 android:id="@+id/iv_video"
-                android:layout_width="200dp"
-                android:layout_height="200dp"
-                android:layout_gravity="center"/>
+                android:layout_width="match_parent"
+                android:layout_height="600dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="17dp"
+                android:visibility="gone"/>
             <Button
                 android:id="@+id/bt_video"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="35dp"
                 android:layout_gravity="center"
+                android:backgroundTint="@color/colorPrimary"
                 android:textAllCaps="false"
+                android:fontFamily="sans-serif-condensed-light"
+                android:textSize="11dp"
+                android:textColor="@color/white"
                 android:text="Ambil Vidio" />
             <Button
                 android:id="@+id/bt_send_camera"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
+                android:layout_width="220dp"
+                android:layout_height="35dp"
                 android:layout_gravity="center"
-                android:text="KIRIM LAPORAN FOTO DAN VIDIO" />
+                android:backgroundTint="@color/colorPrimary"
+                android:textAllCaps="false"
+                android:fontFamily="sans-serif-condensed-light"
+                android:textSize="11dp"
+                android:textColor="@color/white"
+                android:text="KIRIM LAPORAN FOTO DAN VIDIO"
+                android:layout_marginTop="15dp"/>
         </LinearLayout>
     </ScrollView>
 

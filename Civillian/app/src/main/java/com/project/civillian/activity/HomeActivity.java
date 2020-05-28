@@ -35,7 +35,7 @@ import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 public class HomeActivity extends AppCompatActivity implements Runnable {
 
     private ImageView icProfile, /*icInstagram,*/ icFacebook, icTwitter;
-    private Button btEmergency, btPlay;
+    private Button btEmergency, btPlay, btUpload;
     private MediaRecorder myAudioRecorder;
     private MediaPlayer mediaPlayer = new MediaPlayer();
     private String fileName = "";
@@ -68,6 +68,7 @@ public class HomeActivity extends AppCompatActivity implements Runnable {
         btPlay = findViewById(R.id.bt_play);
         soundSeekBar = (SeekBar) findViewById(R.id.sound_bar);
         layoutSound = findViewById(R.id.layout_play_sound);
+        btUpload = findViewById(R.id.bt_upload);
     }
 
     public void initAction(){
@@ -78,6 +79,13 @@ public class HomeActivity extends AppCompatActivity implements Runnable {
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
                 HomeActivity.this.finish();
+            }
+        });
+        btUpload.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(HomeActivity.this, CameraActivity.class);
+                startActivity(intent);
             }
         });
 //        icInstagram.setOnClickListener(new View.OnClickListener() {

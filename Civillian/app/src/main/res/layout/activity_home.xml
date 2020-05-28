@@ -89,6 +89,19 @@
                         android:layout_gravity="center"
                         android:layout_marginLeft="-18dp"/>
                 </LinearLayout>
+
+                <Button
+                    android:layout_width="220dp"
+                    android:layout_height="35dp"
+                    android:layout_gravity="center"
+                    android:id="@+id/bt_upload"
+                    android:text="Upload Foto Dan Vidio"
+                    android:layout_marginTop="20dp"
+                    android:backgroundTint="@color/colorPrimary"
+                    android:textAllCaps="false"
+                    android:fontFamily="sans-serif-condensed-light"
+                    android:textSize="11dp"
+                    android:textColor="@color/white"/>
             </LinearLayout>
 
             <LinearLayout
