@@ -4,18 +4,32 @@ import android.content.Context;
 import android.os.StrictMode;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.File;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.SyncHttpClient;
 import com.project.civillian.model.Civil;
+import com.project.civillian.model.Incident;
+
+import cz.msebera.android.httpclient.Header;
+import cz.msebera.android.httpclient.NameValuePair;
+import cz.msebera.android.httpclient.client.entity.UrlEncodedFormEntity;
 import cz.msebera.android.httpclient.entity.StringEntity;
+import cz.msebera.android.httpclient.entity.mime.MultipartEntityBuilder;
+import cz.msebera.android.httpclient.message.BasicHeader;
+import cz.msebera.android.httpclient.message.BasicNameValuePair;
 
 public class ApiUtil {
-    private static final String BASE_URL = "http://10.10.128.224:8080/siswa/";
-    private static final int CONNECTION_TIMEOUT = 2000;
+    private static final String BASE_URL = "https://cer-api.herokuapp.com";
+    private static final String LOGIN_URL = "/xa/oauth/token";
+    private static final String PANIC_URL = "/xa/api/panic/trx/auth/panic/v.1";
+    private static final int CONNECTION_TIMEOUT = 10000;
     private static SyncHttpClient clientSync = new SyncHttpClient();
-//    private static AsyncHttpClient client = new AsyncHttpClient();
 
     public static void getSync(String url, RequestParams params, AsyncHttpResponseHandler responseHandler) {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
@@ -27,14 +41,35 @@ public class ApiUtil {
         clientSync.get(getAbsoluteUrl(url), params, responseHandler);
     }
 
-    public static void postSyncJson(Context context, Civil civil, String url, RequestParams params, AsyncHttpResponseHandler responseHandler) throws UnsupportedEncodingException, JSONException {
+    private static void setTimeout() {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
         clientSync.setTimeout(CONNECTION_TIMEOUT);
         clientSync.setConnectTimeout(CONNECTION_TIMEOUT);
         clientSync.setMaxRetriesAndTimeout(0, CONNECTION_TIMEOUT);
         clientSync.setResponseTimeout(CONNECTION_TIMEOUT);
-        clientSync.post(context, getAbsoluteUrl(url), civil.getStringEntity(), "application/json", responseHandler);
+    }
+
+    public static void postPanicJson(Context context, String token, Incident i, AsyncHttpResponseHandler responseHandler) throws JSONException, UnsupportedEncodingException {
+        setTimeout();
+        Header[] headers = {new BasicHeader("Authorization", "Bearer ".concat(token)),
+                new BasicHeader("Accept", "application/json"),
+                new BasicHeader("Accept-Language", "en-US")};
+        MultipartEntityBuilder entity = MultipartEntityBuilder.create();
+        entity.addTextBody("data", "{\\\"latestLatitude\\\": \\\""+i.getLatestLatitude()+"\\\",\\\"latestLongitude\\\": \\\"115.1680439\\\",\\\"latestFormattedAddress\\\": \\\"Jl. Melasti No.86, Legian, Kuta, Kabupaten Badung, Bali 80361\\\",\\\"latestProvince\\\": \\\"Bali\\\",\\\"latestCity\\\": \\\"Kabupaten Badung\\\",\\\"latestDistrict\\\": \\\"Kuta\\\",\\\"latestFileChecksum\\\": null,\\\"latestDeviceID\\\": \\\"0123456781\\\",\\\"latestDeviceName\\\": \\\"Xiaomi\\\"}");
+        entity.addBinaryBody("evidence", new File("/storage/777C-1CF6/Download/image001.png"));
+        clientSync.post(context, getAbsoluteUrl(PANIC_URL), headers, entity.build(), null, responseHandler);
+    }
+
+    public static void postLogin(Context context, String username, String password, AsyncHttpResponseHandler responseHandler) throws JSONException, UnsupportedEncodingException {
+        setTimeout();
+        List<NameValuePair> formData = new ArrayList<NameValuePair>();
+        formData.add(new BasicNameValuePair("grant_type", "password"));
+        formData.add(new BasicNameValuePair("username", username));
+        formData.add(new BasicNameValuePair("client_id", "xa-core"));
+        formData.add(new BasicNameValuePair("password", password));
+        Header[] headers = {new BasicHeader("Authorization", "Basic eGEtY29yZTpzZWNyZXR4YTAx"), new BasicHeader("Accept", "application/json")};
+        clientSync.post(context, getAbsoluteUrl(LOGIN_URL), headers, new UrlEncodedFormEntity(formData), "application/x-www-form-urlencoded", responseHandler);
     }
 
     private static String getAbsoluteUrl(String relativeUrl) {

@@ -64,7 +64,7 @@
             <EditText
                 android:layout_width="300dp"
                 android:layout_height="wrap_content"
-                android:id="@+id/tf_ktp"
+                android:id="@+id/tf_nik"
                 android:hint="Nomer ktp, sim, atau kartu keluarga"
                 android:fontFamily="sans-serif-condensed-light"
                 android:textSize="11dp"/>
@@ -86,8 +86,16 @@
             <EditText
                 android:layout_width="300dp"
                 android:layout_height="wrap_content"
-                android:id="@+id/tf_ttl"
+                android:id="@+id/tf_tglLahir"
                 android:hint="Pilih Tanggal Lahir"
+                android:layout_marginTop="4dp"
+                android:fontFamily="sans-serif-condensed-light"
+                android:textSize="11dp"/>
+            <EditText
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/tf_tptLahir"
+                android:hint="Tempat Lahir"
                 android:layout_marginTop="4dp"
                 android:fontFamily="sans-serif-condensed-light"
                 android:textSize="11dp"/>
@@ -176,6 +184,14 @@
                     android:layout_toRightOf="@id/tv_akun"
                     android:background="@color/black"/>
             </RelativeLayout>
+            <EditText
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/tf_username"
+                android:hint="Username"
+                android:layout_marginTop="4dp"
+                android:fontFamily="sans-serif-condensed-light"
+                android:textSize="11dp"/>
             <EditText
                 android:layout_width="300dp"
                 android:layout_height="wrap_content"

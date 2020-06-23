@@ -7,34 +7,38 @@ import androidx.core.content.ContextCompat;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.project.civillian.R;
+import com.project.civillian.model.Civil;
+import com.project.civillian.service.CivilService;
 
-import java.io.File;
 import java.io.IOException;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import static android.Manifest.permission.RECORD_AUDIO;
-import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
 public class HomeActivity extends AppCompatActivity implements Runnable {
 
     private ImageView icProfile, /*icInstagram,*/ icFacebook, icTwitter;
+    private TextView tvNameDixplay;
     private Button btEmergency, btPlay, btUpload;
     private MediaRecorder myAudioRecorder;
     private MediaPlayer mediaPlayer = new MediaPlayer();
@@ -44,11 +48,36 @@ public class HomeActivity extends AppCompatActivity implements Runnable {
     private SeekBar soundSeekBar;
     private Thread soundThread;
     private LinearLayout layoutSound;
+    private FusedLocationProviderClient mFusedLocation;
+    private Double longitude, latitude;
+    CivilService civilService;
+    Civil civil;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+        civilService = new CivilService(this);
+        civil = civilService.getCivilLogin();
+        checkLocationPermission();
+        // GET CURRENT LOCATION
+        mFusedLocation = LocationServices.getFusedLocationProviderClient(this);
+        mFusedLocation.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
+            @Override
+            public void onSuccess(Location location) {
+                if (location != null){
+                    latitude = location.getLatitude();
+                    longitude = location.getLongitude();
+                    // Do it all with location
+//                    Log.d("My Current location", "Lat : " + location.getLatitude() + " Long : " + location.getLongitude());
+                    // Display in Toast
+//                    Toast.makeText(HomeActivity.this,
+//                            "Lat : " + location.getLatitude() + " Long : " + location.getLongitude(),
+//                            Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+
         initComponent();
         initAction();
         initRecorder();
@@ -64,6 +93,12 @@ public class HomeActivity extends AppCompatActivity implements Runnable {
 //        icInstagram = findViewById(R.id.ic_instagram);
         icFacebook = findViewById(R.id.ic_facebook);
         icTwitter = findViewById(R.id.ic_twitter);
+        tvNameDixplay = findViewById(R.id.tv_nameDisplay);
+        if(civil != null){
+            String nama = civil.getNama() != null && !"".equals(civil.getNama()) ? civil.getNama() : civil.getUsername();
+            String nik = civil.getNik() != null && !"".equals(civil.getNik()) ? civil.getNik() : "Mohon lengkapi NIK";
+            tvNameDixplay.setText(nama+"\n"+nik);
+        }
         btEmergency = findViewById(R.id.bt_emergency);
         btPlay = findViewById(R.id.bt_play);
         soundSeekBar = (SeekBar) findViewById(R.id.sound_bar);
@@ -121,6 +156,7 @@ public class HomeActivity extends AppCompatActivity implements Runnable {
             @Override
             public void onClick(View v) {
                 Toast.makeText(getApplicationContext(), "Menghubungi kantor polisi terdekat.\nMengirim lokasi Anda..", Toast.LENGTH_SHORT).show();
+                Toast.makeText(HomeActivity.this, "Lat : " + latitude + " Long : " + longitude, Toast.LENGTH_LONG).show();
             }
         });
         btPlay.setOnClickListener(new View.OnClickListener() {
@@ -226,6 +262,29 @@ public class HomeActivity extends AppCompatActivity implements Runnable {
     private void requestPermissions() {
         ActivityCompat.requestPermissions(HomeActivity.this, new String[]{RECORD_AUDIO}, REQUEST_AUDIO_PERMISSION_CODE);
     }
+
+    public boolean checkLocationPermission() {
+        boolean result = false;
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+                if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                    && ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_COARSE_LOCATION)){
+                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
+                    result = true;
+                }else{
+                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
+                    result = true;
+                }
+            } else {
+                result = true;
+            }
+        }
+        return result;
+    }
+
 
     @Override
     public void run() {

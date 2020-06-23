@@ -10,7 +10,7 @@ import java.util.Date;
 import cz.msebera.android.httpclient.entity.StringEntity;
 
 public class Civil {
-    private Integer nik;
+    private String nik;
     private String email;
     private String nama;
     private String gender;
@@ -19,13 +19,15 @@ public class Civil {
     private String alamat;
     private String telp;
     private String telpRef;
+    private String username;
     private String password;
+    private String token;
 
     public Civil(){
 
     }
 
-    public Civil(Integer nik, String email, String nama, String gender, Date tanggalLahir, String tempatLahir, String alamat, String telp, String telpRef, String password) {
+    public Civil(String nik, String email, String nama, String gender, Date tanggalLahir, String tempatLahir, String alamat, String telp, String telpRef, String username, String password, String token) {
         this.nik=nik;
         this.email=email;
         this.nama=nama;
@@ -35,14 +37,16 @@ public class Civil {
         this.alamat=alamat;
         this.telp=telp;
         this.telpRef=telpRef;
+        this.username = username;
         this.password=password;
+        this.token = token;
     }
 
-    public Integer getNik() {
+    public String getNik() {
         return nik;
     }
 
-    public void setNik(Integer nik) {
+    public void setNik(String nik) {
         this.nik = nik;
     }
 
@@ -110,6 +114,14 @@ public class Civil {
         this.telpRef = telpRef;
     }
 
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
     public String getPassword() {
         return password;
     }
@@ -118,10 +130,18 @@ public class Civil {
         this.password = password;
     }
 
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
     @Override
     public String toString() {
         return "Civil{" +
-                "nik=" + nik +
+                "nik='" + nik + '\'' +
                 ", email='" + email + '\'' +
                 ", nama='" + nama + '\'' +
                 ", gender='" + gender + '\'' +
@@ -130,13 +150,14 @@ public class Civil {
                 ", alamat='" + alamat + '\'' +
                 ", telp='" + telp + '\'' +
                 ", telpRef='" + telpRef + '\'' +
+                ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
+                ", token='" + token + '\'' +
                 '}';
     }
 
     public StringEntity getStringEntity() throws JSONException, UnsupportedEncodingException {
         JSONObject jsonParams = new JSONObject();
-
 //        private Integer nik;
 //        private String email;
 //        private String nama;

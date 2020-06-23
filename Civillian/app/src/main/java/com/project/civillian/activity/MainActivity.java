@@ -10,23 +10,30 @@ import android.widget.Button;
 import android.widget.ImageView;
 
 import com.project.civillian.R;
+import com.project.civillian.model.Civil;
+import com.project.civillian.service.CivilService;
 
 public class MainActivity extends AppCompatActivity {
-
     Button btLogin;
     Button btRegister;
 //    ImageView icInstagram;
     ImageView icFacebook, icTwitter;
+    CivilService civilService;
+    Civil civil;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        civilService = new CivilService(this);
+        civil = civilService.getCivilLogin();
         initComponent();
     }
 
     private void initComponent(){
         btLogin = findViewById(R.id.bt_login);
+        if(civil != null && civil.getUsername() != null) btLogin.setText("Login As "+civil.getUsername());
+
         btRegister = findViewById(R.id.bt_register);
 //        icInstagram = findViewById(R.id.ic_instagram);
         icFacebook = findViewById(R.id.ic_facebook);

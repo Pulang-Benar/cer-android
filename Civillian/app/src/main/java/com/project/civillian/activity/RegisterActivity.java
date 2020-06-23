@@ -30,7 +30,7 @@ import java.util.List;
 public class RegisterActivity extends AppCompatActivity {
 
     private DatePickerDialog datePickerDialog;
-    private EditText tfTtl;
+    private EditText tfTglLahir;
     private TextView tvRegisterHelp;
     private TextView tvLogin;
     private CheckBox showPassword;
@@ -55,7 +55,7 @@ public class RegisterActivity extends AppCompatActivity {
 //    }
 
     private void initComponent(){
-        tfTtl = findViewById(R.id.tf_ttl);
+        tfTglLahir = findViewById(R.id.tf_tglLahir);
         tvRegisterHelp = findViewById(R.id.tv_register_help);
         tvLogin = findViewById(R.id.tv_login);
         showPassword = findViewById(R.id.show_password);
@@ -66,7 +66,7 @@ public class RegisterActivity extends AppCompatActivity {
         tvRegisterHelp.setText(Html.fromHtml("Butuh panduan pendaftaran? <b>Cara pendaftaran</b>"));
         tvLogin.setText(Html.fromHtml("Sudah punya akun? <b>Masuk.</b>"));
 
-        tfTtl.setOnFocusChangeListener(new CompoundButton.OnFocusChangeListener(){
+        tfTglLahir.setOnFocusChangeListener(new CompoundButton.OnFocusChangeListener(){
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if(hasFocus){
@@ -116,7 +116,7 @@ public class RegisterActivity extends AppCompatActivity {
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                 Calendar newDate = Calendar.getInstance();
                 newDate.set(year, monthOfYear, dayOfMonth);
-                tfTtl.setText(new SimpleDateFormat("dd MMMM yyyy").format(newDate.getTime()));
+                tfTglLahir.setText(new SimpleDateFormat("dd MMMM yyyy").format(newDate.getTime()));
             }
         },newCalendar.get(Calendar.YEAR), newCalendar.get(Calendar.MONTH), newCalendar.get(Calendar.DAY_OF_MONTH));
         datePickerDialog.show();
