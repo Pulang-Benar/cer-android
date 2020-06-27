@@ -7,12 +7,15 @@ import androidx.core.content.ContextCompat;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -27,19 +30,23 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.project.civillian.R;
 import com.project.civillian.model.Civil;
+import com.project.civillian.model.Incident;
 import com.project.civillian.service.CivilService;
+import com.project.civillian.service.PanicService;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 
 import static android.Manifest.permission.RECORD_AUDIO;
+import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
 public class HomeActivity extends AppCompatActivity implements Runnable {
-
     private ImageView icProfile, /*icInstagram,*/ icFacebook, icTwitter;
     private TextView tvNameDixplay;
-    private Button btEmergency, btPlay, btUpload;
+    private Button btEmergency, btPlay, btUploadFoto, btUploadVidio;
     private MediaRecorder myAudioRecorder;
     private MediaPlayer mediaPlayer = new MediaPlayer();
     private String fileName = "";
@@ -51,6 +58,7 @@ public class HomeActivity extends AppCompatActivity implements Runnable {
     private FusedLocationProviderClient mFusedLocation;
     private Double longitude, latitude;
     CivilService civilService;
+    PanicService panicService;
     Civil civil;
 
     @Override
@@ -59,32 +67,16 @@ public class HomeActivity extends AppCompatActivity implements Runnable {
         setContentView(R.layout.activity_home);
         civilService = new CivilService(this);
         civil = civilService.getCivilLogin();
+        panicService = new PanicService(this);
         checkLocationPermission();
-        // GET CURRENT LOCATION
-        mFusedLocation = LocationServices.getFusedLocationProviderClient(this);
-        mFusedLocation.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
-            @Override
-            public void onSuccess(Location location) {
-                if (location != null){
-                    latitude = location.getLatitude();
-                    longitude = location.getLongitude();
-                    // Do it all with location
-//                    Log.d("My Current location", "Lat : " + location.getLatitude() + " Long : " + location.getLongitude());
-                    // Display in Toast
-//                    Toast.makeText(HomeActivity.this,
-//                            "Lat : " + location.getLatitude() + " Long : " + location.getLongitude(),
-//                            Toast.LENGTH_LONG).show();
-                }
-            }
-        });
-
+        initLocation();
         initComponent();
         initAction();
         initRecorder();
         initThreadSeekbar();
     }
 
-    public void initThreadSeekbar(){
+    private void initThreadSeekbar(){
         soundThread = new Thread(this);
     }
 
@@ -103,7 +95,22 @@ public class HomeActivity extends AppCompatActivity implements Runnable {
         btPlay = findViewById(R.id.bt_play);
         soundSeekBar = (SeekBar) findViewById(R.id.sound_bar);
         layoutSound = findViewById(R.id.layout_play_sound);
-        btUpload = findViewById(R.id.bt_upload);
+        btUploadFoto = findViewById(R.id.bt_uploadFoto);
+        btUploadVidio = findViewById(R.id.bt_uploadVidio);
+    }
+
+    private void initLocation(){
+        // GET CURRENT LOCATION
+        mFusedLocation = LocationServices.getFusedLocationProviderClient(this);
+        mFusedLocation.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
+            @Override
+            public void onSuccess(Location location) {
+                if (location != null){
+                    latitude = location.getLatitude();
+                    longitude = location.getLongitude();
+                }
+            }
+        });
     }
 
     public void initAction(){
@@ -116,10 +123,17 @@ public class HomeActivity extends AppCompatActivity implements Runnable {
                 HomeActivity.this.finish();
             }
         });
-        btUpload.setOnClickListener(new View.OnClickListener() {
+        btUploadFoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(HomeActivity.this, CameraActivity.class);
+                startActivity(intent);
+            }
+        });
+        btUploadVidio.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(HomeActivity.this, VidioActivity.class);
                 startActivity(intent);
             }
         });
@@ -155,8 +169,7 @@ public class HomeActivity extends AppCompatActivity implements Runnable {
         btEmergency.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "Menghubungi kantor polisi terdekat.\nMengirim lokasi Anda..", Toast.LENGTH_SHORT).show();
-                Toast.makeText(HomeActivity.this, "Lat : " + latitude + " Long : " + longitude, Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Long press, untuk melaporkan.", Toast.LENGTH_SHORT).show();
             }
         });
         btPlay.setOnClickListener(new View.OnClickListener() {
@@ -246,8 +259,17 @@ public class HomeActivity extends AppCompatActivity implements Runnable {
                         myAudioRecorder.reset();
                         myAudioRecorder.release();
                         myAudioRecorder = null;
-//                        Toast.makeText(getApplicationContext(), "Finish recording audio", Toast.LENGTH_SHORT).show();
                         isRecording = false;
+
+                        if(panicService.doPanic(new Incident(fileName, latitude, longitude, getApplicationContext()), getExternalCacheDir().getAbsolutePath()+fileName)){
+                            System.out.println("SUCCESS CALL DO PANIC - SOUND RECORDER");
+                            //GANTI TOMBOL PANIC dengan POLISI MENUJU LOKASI ANDA
+                        } else {
+                            System.out.println("FAILED CALL DO PANIC - SOUND RECORDER");
+                            //GANTI CONNECTION TIMEOUT
+                        }
+                        Toast.makeText(getApplicationContext(), "Menghubungi kantor polisi terdekat.\nMengirim lokasi Anda..", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(HomeActivity.this, "Lat : " + latitude + " Long : " + longitude, Toast.LENGTH_LONG).show();
                     }
                 }
                 return false;
@@ -255,12 +277,14 @@ public class HomeActivity extends AppCompatActivity implements Runnable {
         });
     }
 
-    public boolean checkPermissions() {
-        int result = ContextCompat.checkSelfPermission(getApplicationContext(), RECORD_AUDIO);
-        return result == PackageManager.PERMISSION_GRANTED;
+    private boolean checkPermissions() {
+        int resultAudio = ContextCompat.checkSelfPermission(getApplicationContext(), RECORD_AUDIO);
+        int resultWriteStorage = ContextCompat.checkSelfPermission(getApplicationContext(), WRITE_EXTERNAL_STORAGE);
+        return (resultAudio == PackageManager.PERMISSION_GRANTED && resultWriteStorage == PackageManager.PERMISSION_GRANTED);
     }
     private void requestPermissions() {
         ActivityCompat.requestPermissions(HomeActivity.this, new String[]{RECORD_AUDIO}, REQUEST_AUDIO_PERMISSION_CODE);
+        ActivityCompat.requestPermissions(HomeActivity.this, new String[]{WRITE_EXTERNAL_STORAGE}, REQUEST_AUDIO_PERMISSION_CODE);
     }
 
     public boolean checkLocationPermission() {
@@ -309,6 +333,7 @@ public class HomeActivity extends AppCompatActivity implements Runnable {
     @Override
     public void onPointerCaptureChanged(boolean hasCapture) {
     }
+
 
 
 }

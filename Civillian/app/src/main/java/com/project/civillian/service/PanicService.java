@@ -1,7 +1,10 @@
 package com.project.civillian.service;
 
 import android.content.Context;
+
 import com.loopj.android.http.JsonHttpResponseHandler;
+import com.project.civillian.model.Civil;
+import com.project.civillian.model.Incident;
 import com.project.civillian.util.ApiUtil;
 import com.project.civillian.util.JsonUtil;
 import com.project.civillian.util.SqlLiteUtil;
@@ -14,42 +17,38 @@ import java.util.Map;
 
 import cz.msebera.android.httpclient.Header;
 
-public class LoginService {
+public class PanicService  {
     Context context = null;
     SqlLiteUtil sqlLiteUtil;
 
-    public LoginService(Context context) {
+    public PanicService(Context context) {
         this.context = context;
         sqlLiteUtil = new SqlLiteUtil(context);
     }
 
-    public Boolean doLogin(final String username, final String password){
+    public Boolean doPanic(Incident i, String filePath){
         final Map<String, String> mapResult = new HashMap<>();
         try {
-            ApiUtil.postLogin(context, username, password, new JsonHttpResponseHandler() {
+            ApiUtil.postPanicJson(context, getToken(), i, filePath, new JsonHttpResponseHandler() {
                 @Override
                 public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                     super.onFailure(statusCode, headers, throwable, errorResponse);
-                    System.out.println("FAILED Login ("+statusCode+") = "+getStr(errorResponse)+"");
-                    mapResult.put("FAIL", "FAILED Login ("+statusCode+") = "+getStr(errorResponse)+"");
+                    System.out.println("FAILED Panic Action ("+statusCode+") = "+getStr(errorResponse));
+                    mapResult.put("FAIL", "FAILED Panic Action ("+statusCode+") = "+getStr(errorResponse));
                 }
 
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, JSONObject jsonObject) {
-                    System.out.println("SUCCESS Login ("+statusCode+")");
+                    System.out.println("SUCCESS Panic Action ("+statusCode+")");
                     try {
                         Map<String, Object> resMap = new HashMap<String, Object>();
                         resMap = JsonUtil.jsonToMap(jsonObject);
-//                        for (Map.Entry<String,Object> entry : resMap.entrySet()){
-//                            System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
-//                        }
-                        System.out.println("(String) resMap.get(\"access_token\") -> "+(String) resMap.get("access_token"));
-                        Integer updateRow = sqlLiteUtil.updateToken(username, password, (String) resMap.get("access_token"));
-                        System.out.println("updateRow -> "+updateRow);
-                        if(updateRow == 0){
-                            System.out.println("insert row -> "+sqlLiteUtil.insertToken(username, password, (String) resMap.get("access_token")));
+                        for (Map.Entry<String,Object> entry : resMap.entrySet()){
+                            System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
                         }
-
+                        if("OK_DEFAULT".equals(resMap.get("respStatusCode"))){
+                            mapResult.put("SUCCESS", "Data added successfully");
+                        }
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -60,7 +59,13 @@ public class LoginService {
             System.out.println(e.getMessage());
             mapResult.put("FAIL", e.getMessage());
         }
-        return !mapResult.containsKey("FAIL");
+        return mapResult.containsKey("SUCCESS");
+    }
+
+    private String getToken(){
+        Civil c = sqlLiteUtil.getCivilSqlLite();
+        if(c != null) return c.getToken();
+        else return null;
     }
 
     private String getStr(JSONObject jsonObject){
@@ -70,4 +75,5 @@ public class LoginService {
             return "";
         }
     }
+
 }

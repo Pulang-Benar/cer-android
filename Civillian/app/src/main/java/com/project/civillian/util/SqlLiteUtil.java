@@ -79,6 +79,7 @@ public class SqlLiteUtil extends SQLiteOpenHelper {
         contentValues.put(field_username, c.getUsername());
         contentValues.put(field_password, c.getPassword());
         long result = db.insert(TABLE_NAME, null, contentValues);
+        db.close();
         if (result == -1) return false;
         else return true;
     }
@@ -97,17 +98,21 @@ public class SqlLiteUtil extends SQLiteOpenHelper {
         contentValues.put(field_telp, c.getTelp());
         contentValues.put(field_telpRef, c.getTelpRef());
         contentValues.put(field_password, c.getPassword());
-        return db.update(TABLE_NAME, contentValues, field_username.concat(" = ?"), new String[] { c.getUsername() });
+        Integer rowsUpdated = db.update(TABLE_NAME, contentValues, field_username.concat(" = ?"), new String[] { c.getUsername() });
+        db.close();
+        return rowsUpdated;
     }
 
     public Integer updateToken(String username, String password, String token){
-        System.out.println("UPDATE TOKEN");
+        System.out.println("UPDATE TOKEN -> "+token);
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(field_username, username);
         contentValues.put(field_password, password);
         contentValues.put(field_token, token);
-        return db.update(TABLE_NAME, contentValues, field_username.concat(" = ?"), new String[] { username });
+        Integer rowsUpdated = db.update(TABLE_NAME, contentValues, field_username.concat(" = ?"), new String[] { username });
+        db.close();
+        return rowsUpdated;
     }
 
     public Long insertToken(String username, String password, String token){
@@ -118,29 +123,29 @@ public class SqlLiteUtil extends SQLiteOpenHelper {
         contentValues.put(field_username, username);
         contentValues.put(field_password, password);
         contentValues.put(field_token, token);
-        return db.insert(TABLE_NAME, null, contentValues);
+        Long rowsUpdated = db.insert(TABLE_NAME, null, contentValues);
+        db.close();
+        return rowsUpdated;
     }
 
     public boolean deleteSqlLite(String nik){
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_NAME, field_nik.concat(" = ?"), new String[] { nik });
+        db.close();
         return true;
     }
 
     public void truncateSqlLite(){
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL("DELETE FROM " + TABLE_NAME);
+        db.close();
     }
 
     public Civil getCivilSqlLite(){
         Civil c = new Civil();
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor res = db.rawQuery("select * from "+ TABLE_NAME, null);
-
-        Integer count = 0;
-
         while (res.moveToNext()) {
-            count++;
             c.setNik(res.getString(0));
             c.setEmail(res.getString(1));
             c.setNama(res.getString(2));
@@ -152,10 +157,10 @@ public class SqlLiteUtil extends SQLiteOpenHelper {
             c.setTelpRef(res.getString(8));
             c.setUsername(res.getString(9));
             c.setPassword(res.getString(10));
+            c.setToken(res.getString(11));
         }
-
-        System.out.println("getCivilSqlLite -> "+count);
-
+        res.close();
+        db.close();
         return c;
     }
     //END USING LOCAL SQL LITE

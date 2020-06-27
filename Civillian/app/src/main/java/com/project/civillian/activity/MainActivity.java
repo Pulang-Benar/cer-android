@@ -1,13 +1,13 @@
 package com.project.civillian.activity;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.project.civillian.R;
 import com.project.civillian.model.Civil;
@@ -28,6 +28,15 @@ public class MainActivity extends AppCompatActivity {
         civilService = new CivilService(this);
         civil = civilService.getCivilLogin();
         initComponent();
+        if(getIntent() != null){
+            Bundle bundle=getIntent().getExtras();
+            if(bundle != null){
+                String latitude = bundle.getString("latitude");
+                String longitude = bundle.getString("longitude");
+                System.out.println(" Go to Map Activity - latitude="+latitude+", longitude="+longitude);
+                goToMapNotification(latitude, longitude);
+            }
+        }
     }
 
     private void initComponent(){
@@ -43,7 +52,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
+                MainActivity.this.finish();
             }
         });
         btRegister.setOnClickListener(new View.OnClickListener() {
@@ -80,9 +91,16 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(i);
             }
         });
-
     }
 
+    private void goToMapNotification(String latitude, String longitude){
+        Intent intent = new Intent(MainActivity.this, MapActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra("latitude", latitude);
+        intent.putExtra("longitude", longitude);
+        startActivity(intent);
+        MainActivity.this.finish();
+    }
 
 
 }

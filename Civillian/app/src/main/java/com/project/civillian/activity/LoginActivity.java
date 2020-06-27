@@ -43,6 +43,7 @@ public class LoginActivity extends AppCompatActivity {
         if(civil != null) {
             System.out.println("civil.getUsername() -> "+civil.getUsername());
             System.out.println("civil.getPassword() -> "+civil.getPassword());
+            System.out.println("civil.getToken() -> "+civil.getToken());
             checkLogin();
         }
         initComponent();
