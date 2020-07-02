@@ -24,4 +24,8 @@ public class CivilService {
         return sqlLiteUtil.updateSqlLite(civil);
     }
 
+    public Long insertCivil(Civil civil){
+        return sqlLiteUtil.insertSqlLite(civil);
+    }
+
 }

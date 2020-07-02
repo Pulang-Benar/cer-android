@@ -84,7 +84,8 @@
                 android:textColor="@color/white"
                 android:text="KIRIM LAPORAN FOTO"
                 android:layout_marginTop="15dp"
-                android:layout_marginBottom="30dp"/>
+                android:layout_marginBottom="30dp"
+                android:visibility="gone"/>
         </LinearLayout>
     </ScrollView>
 

@@ -5,9 +5,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+
 import com.project.civillian.model.Civil;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by Shoozay on 12/23/2019.
@@ -63,7 +62,7 @@ public class SqlLiteUtil extends SQLiteOpenHelper {
     }
 
     //START USING LOCAL SQL LITE
-    public boolean insertSqlLite(Civil c){
+    public Long insertSqlLite(Civil c){
         truncateSqlLite();
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
@@ -80,8 +79,7 @@ public class SqlLiteUtil extends SQLiteOpenHelper {
         contentValues.put(field_password, c.getPassword());
         long result = db.insert(TABLE_NAME, null, contentValues);
         db.close();
-        if (result == -1) return false;
-        else return true;
+        return result;
     }
 
     public Integer updateSqlLite(Civil c){
@@ -97,6 +95,7 @@ public class SqlLiteUtil extends SQLiteOpenHelper {
         contentValues.put(field_alamat, c.getAlamat());
         contentValues.put(field_telp, c.getTelp());
         contentValues.put(field_telpRef, c.getTelpRef());
+        contentValues.put(field_username, c.getUsername());
         contentValues.put(field_password, c.getPassword());
         Integer rowsUpdated = db.update(TABLE_NAME, contentValues, field_username.concat(" = ?"), new String[] { c.getUsername() });
         db.close();

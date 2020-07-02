@@ -65,6 +65,26 @@
                     android:textStyle="bold"
                     android:fontFamily="sans-serif-condensed-light"/>
 
+                <pl.droidsonroids.gif.GifImageView
+                    android:id="@+id/ic_polisi"
+                    android:layout_width="250dp"
+                    android:layout_height="200dp"
+                    android:src="@drawable/mobil_polisi"
+                    android:layout_gravity="center"
+                    android:visibility="gone"/>
+
+                <TextView
+                    android:id="@+id/tv_polisi"
+                    android:text="POLISI Menuju Lokasi Anda"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAlignment="center"
+                    android:textSize="18sp"
+                    android:textColor="@color/black"
+                    android:textStyle="bold"
+                    android:fontFamily="sans-serif-condensed-light"
+                    android:visibility="gone"/>
+
                 <LinearLayout
                     android:id="@+id/layout_play_sound"
                     android:layout_width="230dp"
@@ -95,25 +115,49 @@
                     android:layout_height="35dp"
                     android:layout_gravity="center"
                     android:id="@+id/bt_uploadFoto"
-                    android:text="Upload Foto"
+                    android:text="Unggah Foto"
                     android:layout_marginTop="20dp"
                     android:backgroundTint="@color/colorPrimary"
                     android:textAllCaps="false"
                     android:fontFamily="sans-serif-condensed-light"
                     android:textSize="11dp"
                     android:textColor="@color/white"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="25dp"
+                    android:layout_marginBottom="7dp"
+                    android:id="@+id/tv_success_image"
+                    android:text="Foto berhasil diunggah"
+                    android:textAlignment="center"
+                    android:textSize="12sp"
+                    android:textColor="@color/black"
+                    android:textStyle="bold"
+                    android:fontFamily="sans-serif-condensed-light"
+                    android:visibility="gone"/>
 
                 <Button
                     android:layout_width="220dp"
                     android:layout_height="35dp"
                     android:layout_gravity="center"
                     android:id="@+id/bt_uploadVidio"
-                    android:text="Upload Vidio"
+                    android:text="Unggah Vidio"
                     android:backgroundTint="@color/colorPrimary"
                     android:textAllCaps="false"
                     android:fontFamily="sans-serif-condensed-light"
                     android:textSize="11dp"
                     android:textColor="@color/white"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/tv_success_vidio"
+                    android:text="Vidio berhasil diunggah"
+                    android:textAlignment="center"
+                    android:textSize="12sp"
+                    android:textColor="@color/black"
+                    android:textStyle="bold"
+                    android:fontFamily="sans-serif-condensed-light"
+                    android:visibility="gone"/>
             </LinearLayout>
 
             <LinearLayout

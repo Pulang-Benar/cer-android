@@ -1,21 +1,14 @@
 package com.project.civillian.activity;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.location.Address;
-import android.location.Geocoder;
 import android.location.Location;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -25,6 +18,17 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -33,19 +37,22 @@ import com.project.civillian.model.Civil;
 import com.project.civillian.model.Incident;
 import com.project.civillian.service.CivilService;
 import com.project.civillian.service.PanicService;
+import com.project.civillian.util.ApiUtil;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
-import java.util.Locale;
+import java.util.HashMap;
+import java.util.Map;
+
+import pl.droidsonroids.gif.GifImageView;
 
 import static android.Manifest.permission.RECORD_AUDIO;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
 public class HomeActivity extends AppCompatActivity implements Runnable {
     private ImageView icProfile, /*icInstagram,*/ icFacebook, icTwitter;
-    private TextView tvNameDixplay;
+    private TextView tvNameDixplay, tvSuccessImage, tvSuccessVidio, tvPolisi;
     private Button btEmergency, btPlay, btUploadFoto, btUploadVidio;
     private MediaRecorder myAudioRecorder;
     private MediaPlayer mediaPlayer = new MediaPlayer();
@@ -55,21 +62,31 @@ public class HomeActivity extends AppCompatActivity implements Runnable {
     private SeekBar soundSeekBar;
     private Thread soundThread;
     private LinearLayout layoutSound;
-    private FusedLocationProviderClient mFusedLocation;
     private Double longitude, latitude;
+    private GifImageView icPolisi;
     CivilService civilService;
     PanicService panicService;
     Civil civil;
+    private Boolean isImageUploaded, isVidioUploaded, isSoundUploaded;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+        getExtras();
         civilService = new CivilService(this);
         civil = civilService.getCivilLogin();
         panicService = new PanicService(this);
-        checkLocationPermission();
-        initLocation();
+
+        if(checkPermission()){
+            getLatLong();
+        }
+
+        if(!checkPermissionsRecorder()){
+            isRecording = false;
+            requestPermissionsRecorder();
+        }
+
         initComponent();
         initAction();
         initRecorder();
@@ -97,20 +114,23 @@ public class HomeActivity extends AppCompatActivity implements Runnable {
         layoutSound = findViewById(R.id.layout_play_sound);
         btUploadFoto = findViewById(R.id.bt_uploadFoto);
         btUploadVidio = findViewById(R.id.bt_uploadVidio);
-    }
-
-    private void initLocation(){
-        // GET CURRENT LOCATION
-        mFusedLocation = LocationServices.getFusedLocationProviderClient(this);
-        mFusedLocation.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
-            @Override
-            public void onSuccess(Location location) {
-                if (location != null){
-                    latitude = location.getLatitude();
-                    longitude = location.getLongitude();
-                }
-            }
-        });
+        icPolisi = findViewById(R.id.ic_polisi);
+        tvPolisi = findViewById(R.id.tv_polisi);
+        tvSuccessImage = findViewById(R.id.tv_success_image);
+        tvSuccessVidio = findViewById(R.id.tv_success_vidio);
+        if(isSoundUploaded!=null && isSoundUploaded){
+            btEmergency.setVisibility(Button.GONE);
+            icPolisi.setVisibility(GifImageView.VISIBLE);
+            tvPolisi.setVisibility(TextView.VISIBLE);
+        }
+        if(isImageUploaded!=null && isImageUploaded){
+            btUploadFoto.setVisibility(Button.GONE);
+            tvSuccessImage.setVisibility(TextView.VISIBLE);
+        }
+        if(isVidioUploaded!=null && isVidioUploaded){
+            btUploadVidio.setVisibility(Button.GONE);
+            tvSuccessVidio.setVisibility(TextView.VISIBLE);
+        }
     }
 
     public void initAction(){
@@ -127,6 +147,9 @@ public class HomeActivity extends AppCompatActivity implements Runnable {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(HomeActivity.this, CameraActivity.class);
+                intent.putExtra("isImageUploaded", isImageUploaded);
+                intent.putExtra("isVidioUploaded", isVidioUploaded);
+                intent.putExtra("isSoundUploaded", isSoundUploaded);
                 startActivity(intent);
             }
         });
@@ -134,6 +157,9 @@ public class HomeActivity extends AppCompatActivity implements Runnable {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(HomeActivity.this, VidioActivity.class);
+                intent.putExtra("isImageUploaded", isImageUploaded);
+                intent.putExtra("isVidioUploaded", isVidioUploaded);
+                intent.putExtra("isSoundUploaded", isSoundUploaded);
                 startActivity(intent);
             }
         });
@@ -224,22 +250,17 @@ public class HomeActivity extends AppCompatActivity implements Runnable {
                 layoutSound.setVisibility(LinearLayout.VISIBLE);
 //                Toast.makeText(getApplicationContext(), "Started recording audio", Toast.LENGTH_SHORT).show();
                 try {
-                    if(checkPermissions()){
-                        myAudioRecorder = new MediaRecorder();
-                        myAudioRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-                        myAudioRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-                        myAudioRecorder.setAudioEncoder(MediaRecorder.OutputFormat.AMR_NB);
+                    myAudioRecorder = new MediaRecorder();
+                    myAudioRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+                    myAudioRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+                    myAudioRecorder.setAudioEncoder(MediaRecorder.OutputFormat.AMR_NB);
 
-                        fileName = "/rec-"+new SimpleDateFormat("yyyyMMdd-HHmmss").format(new Date())+".3gp";
-                        System.out.println("START RECORDING... "+getExternalCacheDir().getAbsolutePath()+fileName);
-                        myAudioRecorder.setOutputFile(getExternalCacheDir().getAbsolutePath()+fileName);
-                        myAudioRecorder.prepare();
-                        myAudioRecorder.start();
-                        isRecording = true;
-                    } else {
-                        isRecording = false;
-                        requestPermissions();
-                    }
+                    fileName = "/rec-"+new SimpleDateFormat("yyyyMMdd-HHmmss").format(new Date())+".3gp";
+                    System.out.println("START RECORDING... "+getExternalCacheDir().getAbsolutePath()+fileName);
+                    myAudioRecorder.setOutputFile(getExternalCacheDir().getAbsolutePath()+fileName);
+                    myAudioRecorder.prepare();
+                    myAudioRecorder.start();
+                    isRecording = true;
                 } catch (IllegalStateException ise) {
                     isRecording = false;
                     ise.printStackTrace();
@@ -261,15 +282,25 @@ public class HomeActivity extends AppCompatActivity implements Runnable {
                         myAudioRecorder = null;
                         isRecording = false;
 
-                        if(panicService.doPanic(new Incident(fileName, latitude, longitude, getApplicationContext()), getExternalCacheDir().getAbsolutePath()+fileName)){
+                        Incident incident = new Incident(fileName, latitude, longitude, getApplicationContext());
+                        System.out.println(incident.toString());
+                        if(panicService.doPanic(incident, getExternalCacheDir().getAbsolutePath()+fileName)){
                             System.out.println("SUCCESS CALL DO PANIC - SOUND RECORDER");
-                            //GANTI TOMBOL PANIC dengan POLISI MENUJU LOKASI ANDA
+                            System.out.println("Menghubungi kantor polisi terdekat.\nMengirim lokasi Anda..\n"+incident.getLatestFormattedAddress());
+                            Toast.makeText(getApplicationContext(), "Menghubungi kantor polisi terdekat.\nMengirim lokasi Anda..\n"+incident.getLatestFormattedAddress(), Toast.LENGTH_LONG).show();
+                            isSoundUploaded = true;
+                            btEmergency.setVisibility(Button.GONE);
+                            icPolisi.setVisibility(GifImageView.VISIBLE);
+                            tvPolisi.setVisibility(TextView.VISIBLE);
+                            HashMap<String, String> mapStr = new HashMap<>();
+                            mapStr.put("latitude",latitude+"");
+                            mapStr.put("longitude",longitude+"");
+//                            Send_Notification();
+                            ApiUtil.sendPushToSingleInstance(getApplicationContext(), mapStr);
                         } else {
                             System.out.println("FAILED CALL DO PANIC - SOUND RECORDER");
-                            //GANTI CONNECTION TIMEOUT
+                            Toast.makeText(getApplicationContext(), "CONNECTION TIMEOUT - Gagal Mengirim Lokasi Anda", Toast.LENGTH_SHORT).show();
                         }
-                        Toast.makeText(getApplicationContext(), "Menghubungi kantor polisi terdekat.\nMengirim lokasi Anda..", Toast.LENGTH_SHORT).show();
-                        Toast.makeText(HomeActivity.this, "Lat : " + latitude + " Long : " + longitude, Toast.LENGTH_LONG).show();
                     }
                 }
                 return false;
@@ -277,23 +308,75 @@ public class HomeActivity extends AppCompatActivity implements Runnable {
         });
     }
 
-    private boolean checkPermissions() {
+    private boolean checkPermissionsRecorder() {
         int resultAudio = ContextCompat.checkSelfPermission(getApplicationContext(), RECORD_AUDIO);
         int resultWriteStorage = ContextCompat.checkSelfPermission(getApplicationContext(), WRITE_EXTERNAL_STORAGE);
         return (resultAudio == PackageManager.PERMISSION_GRANTED && resultWriteStorage == PackageManager.PERMISSION_GRANTED);
     }
-    private void requestPermissions() {
+    private void requestPermissionsRecorder() {
         ActivityCompat.requestPermissions(HomeActivity.this, new String[]{RECORD_AUDIO}, REQUEST_AUDIO_PERMISSION_CODE);
         ActivityCompat.requestPermissions(HomeActivity.this, new String[]{WRITE_EXTERNAL_STORAGE}, REQUEST_AUDIO_PERMISSION_CODE);
     }
 
-    public boolean checkLocationPermission() {
+    @Override
+    public void run() {
+        int currentPosition = 0;
+        int soundTotal = mediaPlayer.getDuration();
+        soundSeekBar.setMax(soundTotal);
+        while (mediaPlayer != null && currentPosition < soundTotal)
+        {
+            try {
+                Thread.sleep(300);
+                currentPosition = mediaPlayer.getCurrentPosition();
+            } catch (InterruptedException soundException) {
+                return;
+            } catch (Exception otherException) {
+                return;
+            }
+            soundSeekBar.setProgress(currentPosition);
+        }
+    }
+
+    @Override
+    public void onPointerCaptureChanged(boolean hasCapture) {
+    }
+
+    private void getExtras(){
+        if(getIntent() != null){
+            Bundle bundle=getIntent().getExtras();
+            if(bundle != null){
+                isImageUploaded = bundle.getBoolean("isImageUploaded");
+                isVidioUploaded = bundle.getBoolean("isVidioUploaded");
+                isSoundUploaded = bundle.getBoolean("isSoundUploaded");
+            }
+        }
+        System.out.println("CameraActivity isImageUploaded="+isImageUploaded+", isVidioUploaded="+isVidioUploaded+", isSoundUploaded="+isSoundUploaded);
+    }
+
+    private void getLatLong(){
+        final Map<String, Double> result = new HashMap<>();
+        System.out.println("getLatLong");
+        FusedLocationProviderClient mFusedLocation = LocationServices.getFusedLocationProviderClient(this);
+        mFusedLocation.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
+            @Override
+            public void onSuccess(Location location) {
+                if (location != null){
+                    System.out.println("latitude="+location.getLatitude()+", longitude="+location.getLongitude());
+                    latitude = location.getLatitude();
+                    longitude = location.getLongitude();
+                }
+            }
+
+        });
+    }
+
+    private boolean checkPermission() {
         boolean result = false;
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+                    && ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED){
                 if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                    && ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_COARSE_LOCATION)){
+                        && ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_COARSE_LOCATION)){
                     ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
                     ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
                     result = true;
@@ -310,30 +393,56 @@ public class HomeActivity extends AppCompatActivity implements Runnable {
     }
 
 
-    @Override
-    public void run() {
-        int currentPosition = 0;
-        int soundTotal = mediaPlayer.getDuration();
-        soundSeekBar.setMax(soundTotal);
-        while (mediaPlayer != null && currentPosition < soundTotal)
+
+
+
+    private void Send_Notification()
+    {
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, "https://fcm.googleapis.com/fcm/send",
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        System.out.println("farmerorderdataresponse - "+response);
+                        try{
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            Toast.makeText(getApplicationContext(),"Login Error !1"+e,Toast.LENGTH_LONG).show();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        System.out.println("Oops error");
+                        error.printStackTrace();
+                    }
+                })
         {
-            try
-            {
-                Thread.sleep(300);
-                currentPosition = mediaPlayer.getCurrentPosition();
-            } catch (InterruptedException soundException) {
-                return;
-            } catch (Exception otherException) {
-                return;
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String,String> params = new HashMap<>();
+                params.put("title","Order Received");
+                params.put("body","This is a notification");
+                params.put("topic","allTopics");
+                return params;
             }
-            soundSeekBar.setProgress(currentPosition);
-        }
-    }
 
-    @Override
-    public void onPointerCaptureChanged(boolean hasCapture) {
-    }
+            public String getBodyContentType()
+            {
+                return "application/json; charset=utf-8";
+            }
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                String serverKey="AAAAk4TEFVM:APA91bErfrTcoSiKt-oc7rS8dCqoN4Kl953dG7TTUJ3IEgJvcLdM1YMjB1n22cRg5XusbvbXTCVgvAxntljZbRhyugs8TkkO4Qcz6QgON_3TS6lJD32DYHaK8P_kL0iFWHvgerXWPmKf";
+                headers.put("Authorization", "key="+serverKey);
+                return headers;
+            }
 
+        };
+        RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+        requestQueue.add(stringRequest);
+    }
 
 
 }

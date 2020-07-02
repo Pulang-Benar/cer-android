@@ -39,13 +39,12 @@ public class Incident {
     }
 
     public Incident(String id, Double latestLatitude, Double latestLongitude, Context context){
-        Incident i = new Incident();
-        i.setId(id);
-        i.setLatestLatitude(latestLatitude+"");
-        i.setLatestLongitude(latestLongitude+"");
-        i.setLatestFileChecksum("");
-        i.setLatestDeviceID(Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID));
-        i.setLatestDeviceName(Build.MANUFACTURER+" "+Build.MODEL);
+        setId(id);
+        setLatestLatitude(latestLatitude+"");
+        setLatestLongitude(latestLongitude+"");
+        setLatestFileChecksum("");
+        setLatestDeviceID(Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID));
+        setLatestDeviceName(Build.MANUFACTURER+" "+Build.MODEL);
         if(latestLatitude!=null && latestLongitude!=null){
             Geocoder geocoder = new Geocoder(context, Locale.getDefault());
             List<Address> addresses = null;
@@ -64,10 +63,10 @@ public class Incident {
                 System.out.println("provinsi -> "+ provinsi);
                 System.out.println("kota -> "+ kota);
                 System.out.println("kecamatan -> "+ kecamatan);
-                i.setLatestFormattedAddress(alamatLengkap);
-                i.setLatestProvince(provinsi);
-                i.setLatestCity(kota);
-                i.setLatestDistrict(kecamatan);
+                setLatestFormattedAddress(alamatLengkap);
+                setLatestProvince(provinsi);
+                setLatestCity(kota);
+                setLatestDistrict(kecamatan);
             }
         }
     }

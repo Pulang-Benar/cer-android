@@ -85,7 +85,8 @@
                 android:textColor="@color/white"
                 android:text="KIRIM LAPORAN VIDIO"
                 android:layout_marginTop="15dp"
-                android:layout_marginBottom="100dp"/>
+                android:layout_marginBottom="100dp"
+                android:visibility="gone"/>
         </LinearLayout>
     </ScrollView>
 

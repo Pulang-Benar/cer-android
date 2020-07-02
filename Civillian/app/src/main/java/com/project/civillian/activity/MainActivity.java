@@ -25,23 +25,16 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        getExtras();
         civilService = new CivilService(this);
         civil = civilService.getCivilLogin();
         initComponent();
-        if(getIntent() != null){
-            Bundle bundle=getIntent().getExtras();
-            if(bundle != null){
-                String latitude = bundle.getString("latitude");
-                String longitude = bundle.getString("longitude");
-                System.out.println(" Go to Map Activity - latitude="+latitude+", longitude="+longitude);
-                goToMapNotification(latitude, longitude);
-            }
-        }
     }
 
     private void initComponent(){
         btLogin = findViewById(R.id.bt_login);
-        if(civil != null && civil.getUsername() != null) btLogin.setText("Login As "+civil.getUsername());
+        String userStr = civil.getNama()==null||"".equals(civil.getNama())?civil.getUsername():civil.getNama();
+        if(civil != null && civil.getUsername() != null) btLogin.setText("Login As "+userStr);
 
         btRegister = findViewById(R.id.bt_register);
 //        icInstagram = findViewById(R.id.ic_instagram);
@@ -102,5 +95,23 @@ public class MainActivity extends AppCompatActivity {
         MainActivity.this.finish();
     }
 
+    private void getExtras(){
+        System.out.println("getExtras");
+        if(getIntent() != null){
+            System.out.println("getExtras getIntent");
+            Bundle bundle=getIntent().getExtras();
+            if(bundle != null){
+                System.out.println("getExtras bundle");
+                String latitude = bundle.getString("latitude");
+                String longitude = bundle.getString("longitude");
+                System.out.println("latitude="+latitude+", longitude="+longitude);
+                if(latitude!=null && longitude!=null && !"".equals(latitude) && !"".equals(longitude)
+                        && !"0".equals(latitude) && !"0".equals(longitude)){
+                    System.out.println(" Go to Map Activity - latitude="+latitude+", longitude="+longitude);
+                    goToMapNotification(latitude, longitude);
+                }
+            }
+        }
+    }
 
 }
