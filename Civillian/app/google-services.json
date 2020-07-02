@@ -1,0 +1,69 @@
+{
+  "project_info": {
+    "project_number": "633587635539",
+    "firebase_url": "https://mdevelopment-6cda8.firebaseio.com",
+    "project_id": "mdevelopment-6cda8",
+    "storage_bucket": "mdevelopment-6cda8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:633587635539:android:38b6ca27923a60f6",
+        "android_client_info": {
+          "package_name": "com.mdev.mdev"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "633587635539-hhsga5vethp3d8avib498uj4o4561ggk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAmX8sNQrxrtlkHrnEToCvP5iMQUURNaO0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "633587635539-hhsga5vethp3d8avib498uj4o4561ggk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:633587635539:android:d8d7a38d6f7e87f68ebda6",
+        "android_client_info": {
+          "package_name": "com.project.civillian"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "633587635539-hhsga5vethp3d8avib498uj4o4561ggk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAmX8sNQrxrtlkHrnEToCvP5iMQUURNaO0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "633587635539-hhsga5vethp3d8avib498uj4o4561ggk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
