@@ -40,8 +40,8 @@ import cz.msebera.android.httpclient.message.BasicNameValuePair;
 
 
 public class ApiUtil {
-//    private static final String BASE_URL = "https://cer-api.herokuapp.com";
-    private static final String BASE_URL = "http://192.168.1.6:8085";
+    private static final String BASE_URL = "https://cer-api.herokuapp.com";
+//    private static final String BASE_URL = "http://192.168.43.160:8085";
     private static final String LOGIN_URL = "/xa/oauth/token";
     private static final String PANIC_URL = "/xa/api/panic/trx/auth/panic/v.1";
     private static final int CONNECTION_TIMEOUT = 60000;
