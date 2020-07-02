@@ -46,7 +46,7 @@ public class CameraActivity extends AppCompatActivity {
     CivilService civilService;
     Civil civil;
     PanicService panicService;
-    String fileName;
+    String fileName, alamatLengkap="";
     private Double longitude, latitude;
     private Boolean isImageUploaded, isVidioUploaded, isSoundUploaded;
 
@@ -107,6 +107,7 @@ public class CameraActivity extends AppCompatActivity {
                 intent.putExtra("isImageUploaded", isImageUploaded);
                 intent.putExtra("isVidioUploaded", isVidioUploaded);
                 intent.putExtra("isSoundUploaded", isSoundUploaded);
+                intent.putExtra("alamatLengkap", alamatLengkap);
                 startActivity(intent);
                 CameraActivity.this.finish();
             }
@@ -149,6 +150,7 @@ public class CameraActivity extends AppCompatActivity {
                 isImageUploaded = bundle.getBoolean("isImageUploaded");
                 isVidioUploaded = bundle.getBoolean("isVidioUploaded");
                 isSoundUploaded = bundle.getBoolean("isSoundUploaded");
+                alamatLengkap = bundle.getString("alamatLengkap");
             }
         }
         System.out.println("CameraActivity isImageUploaded="+isImageUploaded+", isVidioUploaded="+isVidioUploaded+", isSoundUploaded="+isSoundUploaded);

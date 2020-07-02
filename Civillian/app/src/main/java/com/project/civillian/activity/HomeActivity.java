@@ -22,13 +22,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -37,7 +30,6 @@ import com.project.civillian.model.Civil;
 import com.project.civillian.model.Incident;
 import com.project.civillian.service.CivilService;
 import com.project.civillian.service.PanicService;
-import com.project.civillian.util.ApiUtil;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -56,7 +48,7 @@ public class HomeActivity extends AppCompatActivity implements Runnable {
     private Button btEmergency, btPlay, btUploadFoto, btUploadVidio;
     private MediaRecorder myAudioRecorder;
     private MediaPlayer mediaPlayer = new MediaPlayer();
-    private String fileName = "";
+    private String fileName = "", alamatLengkap="";
     private boolean isRecording = false;
     public static final int REQUEST_AUDIO_PERMISSION_CODE = 1;
     private SeekBar soundSeekBar;
@@ -122,6 +114,7 @@ public class HomeActivity extends AppCompatActivity implements Runnable {
             btEmergency.setVisibility(Button.GONE);
             icPolisi.setVisibility(GifImageView.VISIBLE);
             tvPolisi.setVisibility(TextView.VISIBLE);
+            tvPolisi.setText("POLISI Menuju Lokasi Anda\n"+alamatLengkap);
         }
         if(isImageUploaded!=null && isImageUploaded){
             btUploadFoto.setVisibility(Button.GONE);
@@ -150,6 +143,7 @@ public class HomeActivity extends AppCompatActivity implements Runnable {
                 intent.putExtra("isImageUploaded", isImageUploaded);
                 intent.putExtra("isVidioUploaded", isVidioUploaded);
                 intent.putExtra("isSoundUploaded", isSoundUploaded);
+                intent.putExtra("alamatLengkap", alamatLengkap);
                 startActivity(intent);
             }
         });
@@ -160,6 +154,7 @@ public class HomeActivity extends AppCompatActivity implements Runnable {
                 intent.putExtra("isImageUploaded", isImageUploaded);
                 intent.putExtra("isVidioUploaded", isVidioUploaded);
                 intent.putExtra("isSoundUploaded", isSoundUploaded);
+                intent.putExtra("alamatLengkap", alamatLengkap);
                 startActivity(intent);
             }
         });
@@ -286,17 +281,18 @@ public class HomeActivity extends AppCompatActivity implements Runnable {
                         System.out.println(incident.toString());
                         if(panicService.doPanic(incident, getExternalCacheDir().getAbsolutePath()+fileName)){
                             System.out.println("SUCCESS CALL DO PANIC - SOUND RECORDER");
+                            panicService.sendNotif(latitude+"", longitude+"", incident.getLatestFormattedAddress());
                             System.out.println("Menghubungi kantor polisi terdekat.\nMengirim lokasi Anda..\n"+incident.getLatestFormattedAddress());
                             Toast.makeText(getApplicationContext(), "Menghubungi kantor polisi terdekat.\nMengirim lokasi Anda..\n"+incident.getLatestFormattedAddress(), Toast.LENGTH_LONG).show();
                             isSoundUploaded = true;
+                            alamatLengkap = incident.getLatestFormattedAddress();
                             btEmergency.setVisibility(Button.GONE);
                             icPolisi.setVisibility(GifImageView.VISIBLE);
                             tvPolisi.setVisibility(TextView.VISIBLE);
+                            tvPolisi.setText("POLISI Menuju Lokasi Anda\n"+incident.getLatestFormattedAddress());
                             HashMap<String, String> mapStr = new HashMap<>();
                             mapStr.put("latitude",latitude+"");
                             mapStr.put("longitude",longitude+"");
-//                            Send_Notification();
-                            ApiUtil.sendPushToSingleInstance(getApplicationContext(), mapStr);
                         } else {
                             System.out.println("FAILED CALL DO PANIC - SOUND RECORDER");
                             Toast.makeText(getApplicationContext(), "CONNECTION TIMEOUT - Gagal Mengirim Lokasi Anda", Toast.LENGTH_SHORT).show();
@@ -348,6 +344,7 @@ public class HomeActivity extends AppCompatActivity implements Runnable {
                 isImageUploaded = bundle.getBoolean("isImageUploaded");
                 isVidioUploaded = bundle.getBoolean("isVidioUploaded");
                 isSoundUploaded = bundle.getBoolean("isSoundUploaded");
+                alamatLengkap = bundle.getString("alamatLengkap");
             }
         }
         System.out.println("CameraActivity isImageUploaded="+isImageUploaded+", isVidioUploaded="+isVidioUploaded+", isSoundUploaded="+isSoundUploaded);
@@ -392,57 +389,6 @@ public class HomeActivity extends AppCompatActivity implements Runnable {
         return result;
     }
 
-
-
-
-
-    private void Send_Notification()
-    {
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, "https://fcm.googleapis.com/fcm/send",
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        System.out.println("farmerorderdataresponse - "+response);
-                        try{
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            Toast.makeText(getApplicationContext(),"Login Error !1"+e,Toast.LENGTH_LONG).show();
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        System.out.println("Oops error");
-                        error.printStackTrace();
-                    }
-                })
-        {
-            @Override
-            protected Map<String, String> getParams() {
-                Map<String,String> params = new HashMap<>();
-                params.put("title","Order Received");
-                params.put("body","This is a notification");
-                params.put("topic","allTopics");
-                return params;
-            }
-
-            public String getBodyContentType()
-            {
-                return "application/json; charset=utf-8";
-            }
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                HashMap<String, String> headers = new HashMap<String, String>();
-                String serverKey="AAAAk4TEFVM:APA91bErfrTcoSiKt-oc7rS8dCqoN4Kl953dG7TTUJ3IEgJvcLdM1YMjB1n22cRg5XusbvbXTCVgvAxntljZbRhyugs8TkkO4Qcz6QgON_3TS6lJD32DYHaK8P_kL0iFWHvgerXWPmKf";
-                headers.put("Authorization", "key="+serverKey);
-                return headers;
-            }
-
-        };
-        RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-        requestQueue.add(stringRequest);
-    }
 
 
 }

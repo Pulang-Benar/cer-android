@@ -47,7 +47,7 @@ public class VidioActivity extends AppCompatActivity {
     PanicService panicService;
     private Double longitude, latitude;
     private Boolean isImageUploaded, isVidioUploaded, isSoundUploaded;
-    String fileName;
+    String fileName, alamatLengkap="";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,6 +111,7 @@ public class VidioActivity extends AppCompatActivity {
                 intent.putExtra("isImageUploaded", isImageUploaded);
                 intent.putExtra("isVidioUploaded", isVidioUploaded);
                 intent.putExtra("isSoundUploaded", isSoundUploaded);
+                intent.putExtra("alamatLengkap", alamatLengkap);
                 startActivity(intent);
                 VidioActivity.this.finish();
             }
@@ -140,6 +141,7 @@ public class VidioActivity extends AppCompatActivity {
                 isImageUploaded = bundle.getBoolean("isImageUploaded");
                 isVidioUploaded = bundle.getBoolean("isVidioUploaded");
                 isSoundUploaded = bundle.getBoolean("isSoundUploaded");
+                alamatLengkap = bundle.getString("alamatLengkap");
             }
         }
         System.out.println("CameraActivity isImageUploaded="+isImageUploaded+", isVidioUploaded="+isVidioUploaded+", isSoundUploaded="+isSoundUploaded);

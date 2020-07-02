@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.project.civillian.R;
 import com.project.civillian.model.Civil;
 import com.project.civillian.service.CivilService;
+import com.project.civillian.util.ApiUtil;
 
 public class MainActivity extends AppCompatActivity {
     Button btLogin;
@@ -29,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
         civilService = new CivilService(this);
         civil = civilService.getCivilLogin();
         initComponent();
+        ApiUtil.subscribeToAllTopics();
     }
 
     private void initComponent(){

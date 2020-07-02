@@ -5,35 +5,26 @@ import android.os.StrictMode;
 
 import androidx.annotation.NonNull;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.messaging.FirebaseMessaging;
-import com.google.firebase.messaging.RemoteMessage;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.SyncHttpClient;
 import com.project.civillian.model.Incident;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.List;
-import java.util.Map;
 
 import cz.msebera.android.httpclient.Header;
 import cz.msebera.android.httpclient.NameValuePair;
 import cz.msebera.android.httpclient.client.entity.UrlEncodedFormEntity;
+import cz.msebera.android.httpclient.entity.ContentType;
+import cz.msebera.android.httpclient.entity.StringEntity;
 import cz.msebera.android.httpclient.entity.mime.MultipartEntityBuilder;
 import cz.msebera.android.httpclient.message.BasicHeader;
 import cz.msebera.android.httpclient.message.BasicNameValuePair;
@@ -44,6 +35,7 @@ public class ApiUtil {
 //    private static final String BASE_URL = "http://192.168.43.160:8085";
     private static final String LOGIN_URL = "/xa/oauth/token";
     private static final String PANIC_URL = "/xa/api/panic/trx/auth/panic/v.1";
+    private static final String FIREBASE_URL = "https://fcm.googleapis.com/fcm/send";
     private static final int CONNECTION_TIMEOUT = 60000;
     private static SyncHttpClient clientSync = new SyncHttpClient();
 
@@ -93,21 +85,25 @@ public class ApiUtil {
         clientSync.post(context, getAbsoluteUrl(LOGIN_URL), headers, new UrlEncodedFormEntity(formData), "application/x-www-form-urlencoded", responseHandler);
     }
 
-    public static void sendNotif(){
-        subscribeToTopicAll();
-        System.out.println("SEND NOTIF");
-        String senderId = "633587635539";
-        FirebaseMessaging fm = FirebaseMessaging.getInstance();
-        fm.send(new RemoteMessage.Builder(senderId + "@fcm.googleapis.com")
-//                .setMessageId("mes-"+new SimpleDateFormat("yyyyMMdd-HHmmss").format(new Date()))
-                .setMessageId("1")
-                .addData("latitude", "-6.359607")
-                .addData("longitude", "106.705098")
-                .build());
-        System.out.println("FINISH SEND NOTIF");
+    public static void sendNotif(Context context, String latitude, String longitude, String alamat, AsyncHttpResponseHandler responseHandler) throws JSONException, UnsupportedEncodingException {
+        System.out.println("CALL sendNotif");
+        setTimeout();
+        Header[] headers = {
+                new BasicHeader("Authorization", "key=AAAAk4TEFVM:APA91bErfrTcoSiKt-oc7rS8dCqoN4Kl953dG7TTUJ3IEgJvcLdM1YMjB1n22cRg5XusbvbXTCVgvAxntljZbRhyugs8TkkO4Qcz6QgON_3TS6lJD32DYHaK8P_kL0iFWHvgerXWPmKf"),
+                new BasicHeader("Accept", "application/json"),
+                new BasicHeader("Accept-Language", "en-US")
+        };
+
+        String rawData = "{\n\t\"to\":\"/topics/allTopics\",\n\t\"content-available\":\"true\",\n\t\"notification\":{\n\t\t\"title\":\"Civillian Emergency - Help Me\",\n\t\t\"body\":\""+alamat+"\"\n\t},\n\t\"data\":{\n\t\t\"latitude\":\""+latitude+"\",\n\t\t\"longitude\":\""+longitude+"\"\n\t}\n}";
+        StringEntity requestEntity = new StringEntity(
+                rawData,
+                ContentType.APPLICATION_JSON);
+
+        clientSync.post(context, FIREBASE_URL, headers, requestEntity, "application/json", responseHandler);
     }
 
-    private static void subscribeToTopicAll(){
+
+    public static void subscribeToAllTopics(){
         FirebaseMessaging.getInstance().subscribeToTopic("allTopics")
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
@@ -124,52 +120,6 @@ public class ApiUtil {
         System.out.println("Call URL = "+BASE_URL + relativeUrl);
         return BASE_URL + relativeUrl;
     }
-
-
-    public static void sendPushToSingleInstance(final Context activity, final HashMap dataValue /*your data from the activity*/) {
-        System.out.println("sendPushToSingleInstance");
-        final String url = "https://fcm.googleapis.com/fcm/send";
-        StringRequest myReq = new StringRequest(Request.Method.POST,url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        System.out.println("Bingo Success");
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        System.out.println("Oops error");
-                        error.printStackTrace();
-                    }
-                }) {
-
-            @Override
-            public byte[] getBody() throws com.android.volley.AuthFailureError {
-                Map<String,String> rawParameters = new Hashtable<String, String>();
-                rawParameters.put("data", new JSONObject(dataValue).toString());
-                rawParameters.put("to", "allTopics");
-                return new JSONObject(rawParameters).toString().getBytes();
-            };
-
-            public String getBodyContentType()
-            {
-                return "application/json; charset=utf-8";
-            }
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                HashMap<String, String> headers = new HashMap<String, String>();
-                String serverKey="AAAAk4TEFVM:APA91bErfrTcoSiKt-oc7rS8dCqoN4Kl953dG7TTUJ3IEgJvcLdM1YMjB1n22cRg5XusbvbXTCVgvAxntljZbRhyugs8TkkO4Qcz6QgON_3TS6lJD32DYHaK8P_kL0iFWHvgerXWPmKf";
-                headers.put("Authorization", "key="+serverKey);
-                return headers;
-            }
-
-        };
-
-        Volley.newRequestQueue(activity).add(myReq);
-        System.out.println("END sendPushToSingleInstance");
-    }
-
 
 
 }

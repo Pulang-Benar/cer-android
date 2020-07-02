@@ -76,4 +76,42 @@ public class PanicService  {
         }
     }
 
+
+    public Boolean sendNotif(String latitude, String longitude, String alamat){
+        System.out.println("call service send notif "+latitude+", "+longitude);
+        final Map<String, String> mapResult = new HashMap<>();
+        try {
+            ApiUtil.sendNotif(context, latitude, longitude, alamat, new JsonHttpResponseHandler() {
+                @Override
+                public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                    super.onFailure(statusCode, headers, throwable, errorResponse);
+                    System.out.println("FAILED send notif ("+statusCode+") = "+getStr(errorResponse));
+                    mapResult.put("FAIL", "FAILED send notif ("+statusCode+") = "+getStr(errorResponse));
+                }
+
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, JSONObject jsonObject) {
+                    System.out.println("SUCCESS send notif ("+statusCode+")");
+                    try {
+                        Map<String, Object> resMap = new HashMap<String, Object>();
+                        resMap = JsonUtil.jsonToMap(jsonObject);
+                        for (Map.Entry<String,Object> entry : resMap.entrySet()){
+                            System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
+                        }
+                        if("OK_DEFAULT".equals(resMap.get("respStatusCode"))){
+                            mapResult.put("SUCCESS", "Data added successfully");
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+            });
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            mapResult.put("FAIL", e.getMessage());
+        }
+        return mapResult.containsKey("SUCCESS");
+    }
+
 }
