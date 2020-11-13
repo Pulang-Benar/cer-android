@@ -87,6 +87,7 @@ public class VidioActivity extends AppCompatActivity {
                 Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
                 intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                 fileName = "/vid-"+new SimpleDateFormat("yyyyMMdd-HHmmss").format(new Date())+".mp4";
+                System.out.println("1. fileName = "+fileName);
                 Uri vidioUri = FileProvider.getUriForFile(getApplicationContext(), getApplicationContext().getPackageName() + ".provider", new File(getExternalCacheDir().getAbsolutePath()+fileName));
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, vidioUri);
                 startActivityForResult(intent, VIDEO_REQUEST_CODE);

@@ -18,13 +18,16 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.project.civillian.R;
 import com.project.civillian.model.Civil;
 import com.project.civillian.model.Incident;
@@ -354,17 +357,35 @@ public class HomeActivity extends AppCompatActivity implements Runnable {
         final Map<String, Double> result = new HashMap<>();
         System.out.println("getLatLong");
         FusedLocationProviderClient mFusedLocation = LocationServices.getFusedLocationProviderClient(this);
+
+
+        mFusedLocation.getLastLocation().addOnCompleteListener(this, new OnCompleteListener<Location>() {
+            @Override
+            public void onComplete(@NonNull Task<Location> task) {
+                if(task.isSuccessful()){
+                    Location location = task.getResult();
+                    if(location != null){
+                        System.out.println("2. latitude="+location.getLatitude()+", longitude="+location.getLongitude());
+                        latitude = location.getLatitude();
+                        longitude = location.getLongitude();
+                    }
+                }
+            }
+        });
+
         mFusedLocation.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
             @Override
             public void onSuccess(Location location) {
+                System.out.println("getLatLong on success - "+location);
                 if (location != null){
-                    System.out.println("latitude="+location.getLatitude()+", longitude="+location.getLongitude());
+                    System.out.println("1. latitude="+location.getLatitude()+", longitude="+location.getLongitude());
                     latitude = location.getLatitude();
                     longitude = location.getLongitude();
                 }
             }
 
         });
+
     }
 
     private boolean checkPermission() {
