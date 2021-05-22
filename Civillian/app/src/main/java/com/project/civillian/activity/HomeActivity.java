@@ -68,6 +68,12 @@ public class HomeActivity extends AppCompatActivity implements Runnable {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         getExtras();
         civilService = new CivilService(this);
         civil = civilService.getCivilLogin();

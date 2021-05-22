@@ -2,6 +2,9 @@ package com.project.civillian.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 import com.project.civillian.R;
+import com.project.civillian.service.CivilService;
+import com.project.civillian.service.LoginService;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Html;
@@ -20,6 +23,11 @@ public class LoginEmailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login_email);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         initComponent();
     }
 

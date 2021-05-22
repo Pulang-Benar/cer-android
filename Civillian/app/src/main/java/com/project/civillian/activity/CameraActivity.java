@@ -28,6 +28,7 @@ import com.project.civillian.model.Civil;
 import com.project.civillian.model.Incident;
 import com.project.civillian.service.CivilService;
 import com.project.civillian.service.PanicService;
+import com.project.civillian.util.ApiUtil;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -54,6 +55,11 @@ public class CameraActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         getExtras();
         civilService = new CivilService(this);
         civil = civilService.getCivilLogin();
@@ -71,7 +77,8 @@ public class CameraActivity extends AppCompatActivity {
         if(civil != null){
             String nama = civil.getNama() != null && !"".equals(civil.getNama()) ? civil.getNama() : civil.getUsername();
             String nik = civil.getNik() != null && !"".equals(civil.getNik()) ? civil.getNik() : "Mohon lengkapi NIK";
-            tvNameDixplay.setText(nama+"\n"+nik);
+            String tDisp = nama+"\n"+nik;
+            tvNameDixplay.setText(tDisp);
         }
         btCamera = (Button) findViewById(R.id.bt_camera);
         btSendCamera = findViewById(R.id.bt_send_camera);

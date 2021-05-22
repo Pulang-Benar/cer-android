@@ -25,6 +25,11 @@ public class LoginTokenActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login_token);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         initComponent();
         initAction();
     }

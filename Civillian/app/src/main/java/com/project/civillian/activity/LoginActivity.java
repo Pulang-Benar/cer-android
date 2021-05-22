@@ -20,6 +20,7 @@ import com.project.civillian.R;
 import com.project.civillian.model.Civil;
 import com.project.civillian.service.CivilService;
 import com.project.civillian.service.LoginService;
+import com.project.civillian.service.PanicService;
 
 public class LoginActivity extends AppCompatActivity {
     TextView tvLoginHelp;
@@ -36,11 +37,16 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         loginService = new LoginService(this);
         civilService = new CivilService(this);
         civil = civilService.getCivilLogin();
-
-        if(civil != null) {
+        System.out.println("civil.getUsername -> "+civil.getUsername());
+        if(civil.getUsername() != null) {
             System.out.println("civil.getUsername() -> "+civil.getUsername());
             System.out.println("civil.getPassword() -> "+civil.getPassword());
             System.out.println("civil.getToken() -> "+civil.getToken());

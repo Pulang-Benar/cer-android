@@ -2,6 +2,7 @@ package com.project.civillian.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 import com.project.civillian.R;
+import com.project.civillian.service.CivilService;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -26,8 +27,14 @@ public class ResetPasswordActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reset_password);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         initComponent();
     }
+
     public void initComponent(){
         tfPassword = findViewById(R.id.tf_password);
         tfPasswordRetype = findViewById(R.id.tf_password_retype);

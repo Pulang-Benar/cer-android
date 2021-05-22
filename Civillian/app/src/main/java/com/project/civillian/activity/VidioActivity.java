@@ -47,12 +47,17 @@ public class VidioActivity extends AppCompatActivity {
     PanicService panicService;
     private Double longitude, latitude;
     private Boolean isImageUploaded, isVidioUploaded, isSoundUploaded;
-    String fileName, alamatLengkap="";
+    String fileName, alamatLengkap = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_vidio);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         getExtras();
         civilService = new CivilService(this);
         civil = civilService.getCivilLogin();
@@ -60,17 +65,18 @@ public class VidioActivity extends AppCompatActivity {
         initComponent();
         initAction();
 
-        if(checkPermission()){
+        if (checkPermission()) {
             getLatLong();
         }
     }
 
-    private void initComponent(){
+    private void initComponent() {
         tvNameDixplay = findViewById(R.id.tv_nameDisplay);
-        if(civil != null){
+        if (civil != null) {
             String nama = civil.getNama() != null && !"".equals(civil.getNama()) ? civil.getNama() : civil.getUsername();
             String nik = civil.getNik() != null && !"".equals(civil.getNik()) ? civil.getNik() : "Mohon lengkapi NIK";
-            tvNameDixplay.setText(nama+"\n"+nik);
+            String tDisp = nama + "\n" + nik;
+            tvNameDixplay.setText(tDisp);
         }
         btVidio = (Button) findViewById(R.id.bt_video);
         btSendCamera = findViewById(R.id.bt_send_camera);
@@ -79,16 +85,16 @@ public class VidioActivity extends AppCompatActivity {
         ivVideo.setMediaController(myVideoController);
     }
 
-    private void initAction(){
+    private void initAction() {
         btVidio.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //intent khusus untuk menangkap vidio lewat kamera
                 Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
                 intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                fileName = "/vid-"+new SimpleDateFormat("yyyyMMdd-HHmmss").format(new Date())+".mp4";
-                System.out.println("1. fileName = "+fileName);
-                Uri vidioUri = FileProvider.getUriForFile(getApplicationContext(), getApplicationContext().getPackageName() + ".provider", new File(getExternalCacheDir().getAbsolutePath()+fileName));
+                fileName = "/vid-" + new SimpleDateFormat("yyyyMMdd-HHmmss").format(new Date()) + ".mp4";
+                System.out.println("1. fileName = " + fileName);
+                Uri vidioUri = FileProvider.getUriForFile(getApplicationContext(), getApplicationContext().getPackageName() + ".provider", new File(getExternalCacheDir().getAbsolutePath() + fileName));
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, vidioUri);
                 startActivityForResult(intent, VIDEO_REQUEST_CODE);
 
@@ -98,8 +104,8 @@ public class VidioActivity extends AppCompatActivity {
         btSendCamera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                System.out.println("fileName doPanic -> "+fileName);
-                if(panicService.doPanic(new Incident(fileName, latitude, longitude, getApplicationContext()), getExternalCacheDir().getAbsolutePath()+fileName)){
+                System.out.println("fileName doPanic -> " + fileName);
+                if (panicService.doPanic(new Incident(fileName, latitude, longitude, getApplicationContext()), getExternalCacheDir().getAbsolutePath() + fileName)) {
                     Toast.makeText(getApplicationContext(), "Berhasil mengunggah vidio rekaman", Toast.LENGTH_SHORT).show();
                     System.out.println("SUCCESS CALL DO PANIC - SOUND RECORDER");
                     isVidioUploaded = true;
@@ -123,10 +129,10 @@ public class VidioActivity extends AppCompatActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
-            case(VIDEO_REQUEST_CODE) :
-                if(resultCode == Activity.RESULT_OK) {
+            case (VIDEO_REQUEST_CODE):
+                if (resultCode == Activity.RESULT_OK) {
                     Uri videoUri = data.getData();
-                    System.out.println("fileName -> "+fileName);
+                    System.out.println("fileName -> " + fileName);
                     ivVideo.setVisibility(VideoView.VISIBLE);
                     ivVideo.setVideoURI(videoUri);
                     btSendCamera.setVisibility(Button.VISIBLE);
@@ -135,27 +141,37 @@ public class VidioActivity extends AppCompatActivity {
         }
     }
 
-    private void getExtras(){
-        if(getIntent() != null){
-            Bundle bundle=getIntent().getExtras();
-            if(bundle != null){
+    private void getExtras() {
+        if (getIntent() != null) {
+            Bundle bundle = getIntent().getExtras();
+            if (bundle != null) {
                 isImageUploaded = bundle.getBoolean("isImageUploaded");
                 isVidioUploaded = bundle.getBoolean("isVidioUploaded");
                 isSoundUploaded = bundle.getBoolean("isSoundUploaded");
                 alamatLengkap = bundle.getString("alamatLengkap");
             }
         }
-        System.out.println("CameraActivity isImageUploaded="+isImageUploaded+", isVidioUploaded="+isVidioUploaded+", isSoundUploaded="+isSoundUploaded);
+        System.out.println("CameraActivity isImageUploaded=" + isImageUploaded + ", isVidioUploaded=" + isVidioUploaded + ", isSoundUploaded=" + isSoundUploaded);
     }
 
-    private void getLatLong(){
+    private void getLatLong() {
         final Map<String, Double> result = new HashMap<>();
         FusedLocationProviderClient mFusedLocation = LocationServices.getFusedLocationProviderClient(this);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
         mFusedLocation.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
             @Override
             public void onSuccess(Location location) {
-                if (location != null){
-                    System.out.println("latitude="+location.getLatitude()+", longitude="+location.getLongitude());
+                if (location != null) {
+                    System.out.println("latitude=" + location.getLatitude() + ", longitude=" + location.getLongitude());
                     latitude = location.getLatitude();
                     longitude = location.getLongitude();
                 }

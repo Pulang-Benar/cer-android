@@ -1,6 +1,8 @@
 package com.project.civillian.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.android.gms.maps.SupportMapFragment;
 import com.project.civillian.R;
 import com.project.civillian.model.Civil;
 import com.project.civillian.service.CivilService;
@@ -8,6 +10,7 @@ import com.project.civillian.util.DateUtil;
 
 import android.app.DatePickerDialog;
 import android.content.Intent;
+import android.location.Address;
 import android.os.Bundle;
 import android.text.Editable;
 import android.view.View;
@@ -34,6 +37,11 @@ public class ProfileActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         initComponent();
         civilService = new CivilService(this);
         civil = civilService.getCivilLogin();
