@@ -31,12 +31,12 @@ import cz.msebera.android.httpclient.message.BasicNameValuePair;
 
 
 public class ApiUtil {
-    private static final String BASE_URL = "https://cer-api.herokuapp.com";
-//    private static final String BASE_URL = "http://192.168.43.160:8085";
+//    private static final String BASE_URL = "https://cer-api.herokuapp.com";
+    private static final String BASE_URL = "http://192.168.210.160:8085";
     private static final String LOGIN_URL = "/xa/oauth/token";
     private static final String PANIC_URL = "/xa/api/panic/trx/auth/panic/v.1";
     private static final String FIREBASE_URL = "https://fcm.googleapis.com/fcm/send";
-    private static final int CONNECTION_TIMEOUT = 60000;
+    private static final int CONNECTION_TIMEOUT = 000;
     private static SyncHttpClient clientSync = new SyncHttpClient();
 
     public static void getSync(String url, RequestParams params, AsyncHttpResponseHandler responseHandler) {

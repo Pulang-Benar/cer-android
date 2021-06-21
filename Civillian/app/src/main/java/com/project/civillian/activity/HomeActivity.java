@@ -46,12 +46,13 @@ import static android.Manifest.permission.RECORD_AUDIO;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
 public class HomeActivity extends AppCompatActivity implements Runnable {
-    private ImageView icProfile, /*icInstagram,*/ icFacebook, icTwitter;
+    private ImageView icProfile, /*icInstagram,*/
+            icFacebook, icTwitter;
     private TextView tvNameDixplay, tvSuccessImage, tvSuccessVidio, tvPolisi;
     private Button btEmergency, btPlay, btUploadFoto, btUploadVidio;
     private MediaRecorder myAudioRecorder;
     private MediaPlayer mediaPlayer = new MediaPlayer();
-    private String fileName = "", alamatLengkap="";
+    private String fileName = "", alamatLengkap = "";
     private boolean isRecording = false;
     public static final int REQUEST_AUDIO_PERMISSION_CODE = 1;
     private SeekBar soundSeekBar;
@@ -68,6 +69,16 @@ public class HomeActivity extends AppCompatActivity implements Runnable {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
+        if (checkPermission()) {
+            getLatLong();
+        }
+
+        if (!checkPermissionsRecorder()) {
+            isRecording = false;
+            requestPermissionsRecorder();
+        }
+
     }
 
 
@@ -79,35 +90,26 @@ public class HomeActivity extends AppCompatActivity implements Runnable {
         civil = civilService.getCivilLogin();
         panicService = new PanicService(this);
 
-        if(checkPermission()){
-            getLatLong();
-        }
-
-        if(!checkPermissionsRecorder()){
-            isRecording = false;
-            requestPermissionsRecorder();
-        }
-
         initComponent();
         initAction();
         initRecorder();
         initThreadSeekbar();
     }
 
-    private void initThreadSeekbar(){
+    private void initThreadSeekbar() {
         soundThread = new Thread(this);
     }
 
-    private void initComponent(){
+    private void initComponent() {
         icProfile = findViewById(R.id.ic_profile);
 //        icInstagram = findViewById(R.id.ic_instagram);
         icFacebook = findViewById(R.id.ic_facebook);
         icTwitter = findViewById(R.id.ic_twitter);
         tvNameDixplay = findViewById(R.id.tv_nameDisplay);
-        if(civil != null){
+        if (civil != null) {
             String nama = civil.getNama() != null && !"".equals(civil.getNama()) ? civil.getNama() : civil.getUsername();
             String nik = civil.getNik() != null && !"".equals(civil.getNik()) ? civil.getNik() : "Mohon lengkapi NIK";
-            tvNameDixplay.setText(nama+"\n"+nik);
+            tvNameDixplay.setText(nama + "\n" + nik);
         }
         btEmergency = findViewById(R.id.bt_emergency);
         btPlay = findViewById(R.id.bt_play);
@@ -119,23 +121,23 @@ public class HomeActivity extends AppCompatActivity implements Runnable {
         tvPolisi = findViewById(R.id.tv_polisi);
         tvSuccessImage = findViewById(R.id.tv_success_image);
         tvSuccessVidio = findViewById(R.id.tv_success_vidio);
-        if(isSoundUploaded!=null && isSoundUploaded){
+        if (isSoundUploaded != null && isSoundUploaded) {
             btEmergency.setVisibility(Button.GONE);
             icPolisi.setVisibility(GifImageView.VISIBLE);
             tvPolisi.setVisibility(TextView.VISIBLE);
-            tvPolisi.setText("POLISI Menuju Lokasi Anda\n"+alamatLengkap);
+            tvPolisi.setText("POLISI Menuju Lokasi Anda\n" + alamatLengkap);
         }
-        if(isImageUploaded!=null && isImageUploaded){
+        if (isImageUploaded != null && isImageUploaded) {
             btUploadFoto.setVisibility(Button.GONE);
             tvSuccessImage.setVisibility(TextView.VISIBLE);
         }
-        if(isVidioUploaded!=null && isVidioUploaded){
+        if (isVidioUploaded != null && isVidioUploaded) {
             btUploadVidio.setVisibility(Button.GONE);
             tvSuccessVidio.setVisibility(TextView.VISIBLE);
         }
     }
 
-    public void initAction(){
+    public void initAction() {
         icProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -207,7 +209,7 @@ public class HomeActivity extends AppCompatActivity implements Runnable {
             public void onClick(View v) {
                 mediaPlayer = new MediaPlayer();
                 try {
-                    mediaPlayer.setDataSource(getExternalCacheDir().getAbsolutePath()+fileName);
+                    mediaPlayer.setDataSource(getExternalCacheDir().getAbsolutePath() + fileName);
                     mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                         public void onPrepared(MediaPlayer player) {
                             player.start();
@@ -238,16 +240,18 @@ public class HomeActivity extends AppCompatActivity implements Runnable {
                     mediaPlayer.seekTo(progress);
                 }
             }
+
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
             }
+
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
             }
         });
     }
 
-    public void initRecorder(){
+    public void initRecorder() {
         btEmergency.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
@@ -259,9 +263,9 @@ public class HomeActivity extends AppCompatActivity implements Runnable {
                     myAudioRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
                     myAudioRecorder.setAudioEncoder(MediaRecorder.OutputFormat.AMR_NB);
 
-                    fileName = "/rec-"+new SimpleDateFormat("yyyyMMdd-HHmmss").format(new Date())+".3gp";
-                    System.out.println("START RECORDING... "+getExternalCacheDir().getAbsolutePath()+fileName);
-                    myAudioRecorder.setOutputFile(getExternalCacheDir().getAbsolutePath()+fileName);
+                    fileName = "/rec-" + new SimpleDateFormat("yyyyMMdd-HHmmss").format(new Date()) + ".3gp";
+                    System.out.println("START RECORDING... " + getExternalCacheDir().getAbsolutePath() + fileName);
+                    myAudioRecorder.setOutputFile(getExternalCacheDir().getAbsolutePath() + fileName);
                     myAudioRecorder.prepare();
                     myAudioRecorder.start();
                     isRecording = true;
@@ -275,7 +279,7 @@ public class HomeActivity extends AppCompatActivity implements Runnable {
                 return true;
             }
         });
-        btEmergency.setOnTouchListener(new View.OnTouchListener(){
+        btEmergency.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_UP) {
@@ -288,20 +292,20 @@ public class HomeActivity extends AppCompatActivity implements Runnable {
 
                         Incident incident = new Incident(fileName, latitude, longitude, getApplicationContext());
                         System.out.println(incident.toString());
-                        if(panicService.doPanic(incident, getExternalCacheDir().getAbsolutePath()+fileName)){
+                        if (panicService.doPanic(incident, getExternalCacheDir().getAbsolutePath() + fileName)) {
                             System.out.println("SUCCESS CALL DO PANIC - SOUND RECORDER");
-                            panicService.sendNotif(latitude+"", longitude+"", incident.getLatestFormattedAddress());
-                            System.out.println("Menghubungi kantor polisi terdekat.\nMengirim lokasi Anda..\n"+incident.getLatestFormattedAddress());
-                            Toast.makeText(getApplicationContext(), "Menghubungi kantor polisi terdekat.\nMengirim lokasi Anda..\n"+incident.getLatestFormattedAddress(), Toast.LENGTH_LONG).show();
+                            panicService.sendNotif(latitude + "", longitude + "", incident.getLatestFormattedAddress());
+                            System.out.println("Menghubungi kantor polisi terdekat.\nMengirim lokasi Anda..\n" + incident.getLatestFormattedAddress());
+                            Toast.makeText(getApplicationContext(), "Menghubungi kantor polisi terdekat.\nMengirim lokasi Anda..\n" + incident.getLatestFormattedAddress(), Toast.LENGTH_LONG).show();
                             isSoundUploaded = true;
                             alamatLengkap = incident.getLatestFormattedAddress();
                             btEmergency.setVisibility(Button.GONE);
                             icPolisi.setVisibility(GifImageView.VISIBLE);
                             tvPolisi.setVisibility(TextView.VISIBLE);
-                            tvPolisi.setText("POLISI Menuju Lokasi Anda\n"+incident.getLatestFormattedAddress());
+                            tvPolisi.setText("POLISI Menuju Lokasi Anda\n" + incident.getLatestFormattedAddress());
                             HashMap<String, String> mapStr = new HashMap<>();
-                            mapStr.put("latitude",latitude+"");
-                            mapStr.put("longitude",longitude+"");
+                            mapStr.put("latitude", latitude + "");
+                            mapStr.put("longitude", longitude + "");
                         } else {
                             System.out.println("FAILED CALL DO PANIC - SOUND RECORDER");
                             Toast.makeText(getApplicationContext(), "CONNECTION TIMEOUT - Gagal Mengirim Lokasi Anda", Toast.LENGTH_SHORT).show();
@@ -318,6 +322,7 @@ public class HomeActivity extends AppCompatActivity implements Runnable {
         int resultWriteStorage = ContextCompat.checkSelfPermission(getApplicationContext(), WRITE_EXTERNAL_STORAGE);
         return (resultAudio == PackageManager.PERMISSION_GRANTED && resultWriteStorage == PackageManager.PERMISSION_GRANTED);
     }
+
     private void requestPermissionsRecorder() {
         ActivityCompat.requestPermissions(HomeActivity.this, new String[]{RECORD_AUDIO}, REQUEST_AUDIO_PERMISSION_CODE);
         ActivityCompat.requestPermissions(HomeActivity.this, new String[]{WRITE_EXTERNAL_STORAGE}, REQUEST_AUDIO_PERMISSION_CODE);
@@ -328,8 +333,7 @@ public class HomeActivity extends AppCompatActivity implements Runnable {
         int currentPosition = 0;
         int soundTotal = mediaPlayer.getDuration();
         soundSeekBar.setMax(soundTotal);
-        while (mediaPlayer != null && currentPosition < soundTotal)
-        {
+        while (mediaPlayer != null && currentPosition < soundTotal) {
             try {
                 Thread.sleep(300);
                 currentPosition = mediaPlayer.getCurrentPosition();
@@ -346,32 +350,43 @@ public class HomeActivity extends AppCompatActivity implements Runnable {
     public void onPointerCaptureChanged(boolean hasCapture) {
     }
 
-    private void getExtras(){
-        if(getIntent() != null){
-            Bundle bundle=getIntent().getExtras();
-            if(bundle != null){
+    private void getExtras() {
+        if (getIntent() != null) {
+            Bundle bundle = getIntent().getExtras();
+            if (bundle != null) {
                 isImageUploaded = bundle.getBoolean("isImageUploaded");
                 isVidioUploaded = bundle.getBoolean("isVidioUploaded");
                 isSoundUploaded = bundle.getBoolean("isSoundUploaded");
                 alamatLengkap = bundle.getString("alamatLengkap");
             }
         }
-        System.out.println("CameraActivity isImageUploaded="+isImageUploaded+", isVidioUploaded="+isVidioUploaded+", isSoundUploaded="+isSoundUploaded);
+        System.out.println("CameraActivity isImageUploaded=" + isImageUploaded + ", isVidioUploaded=" + isVidioUploaded + ", isSoundUploaded=" + isSoundUploaded);
     }
 
-    private void getLatLong(){
+    private void getLatLong() {
         final Map<String, Double> result = new HashMap<>();
         System.out.println("getLatLong");
         FusedLocationProviderClient mFusedLocation = LocationServices.getFusedLocationProviderClient(this);
 
 
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+
         mFusedLocation.getLastLocation().addOnCompleteListener(this, new OnCompleteListener<Location>() {
             @Override
             public void onComplete(@NonNull Task<Location> task) {
-                if(task.isSuccessful()){
+                if (task.isSuccessful()) {
                     Location location = task.getResult();
-                    if(location != null){
-                        System.out.println("2. latitude="+location.getLatitude()+", longitude="+location.getLongitude());
+                    if (location != null) {
+                        System.out.println("2. latitude=" + location.getLatitude() + ", longitude=" + location.getLongitude());
                         latitude = location.getLatitude();
                         longitude = location.getLongitude();
                     }
