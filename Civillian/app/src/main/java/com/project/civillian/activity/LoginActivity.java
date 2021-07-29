@@ -3,6 +3,7 @@ package com.project.civillian.activity;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.method.HideReturnsTransformationMethod;
@@ -13,6 +14,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,8 +32,7 @@ public class LoginActivity extends AppCompatActivity {
     EditText tfPassword;
     Button btLogin;
     LoginService loginService;
-    CivilService civilService;
-    Civil civil;
+    ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,26 +44,8 @@ public class LoginActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         loginService = new LoginService(this);
-        civilService = new CivilService(this);
-        civil = civilService.getCivilLogin();
-        System.out.println("civil.getUsername -> "+civil.getUsername());
-        if(civil.getUsername() != null) {
-            System.out.println("civil.getUsername() -> "+civil.getUsername());
-            System.out.println("civil.getPassword() -> "+civil.getPassword());
-            System.out.println("civil.getToken() -> "+civil.getToken());
-            checkLogin();
-        }
         initComponent();
         initAction();
-    }
-
-    private void checkLogin(){
-        if(loginService.doLogin(civil.getUsername(), civil.getPassword())){
-            Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
-            LoginActivity.this.finish();
-        }
     }
 
     private void initComponent(){
@@ -74,6 +57,8 @@ public class LoginActivity extends AppCompatActivity {
         btLogin = findViewById(R.id.bt_login);
         tvLoginHelp.setText(Html.fromHtml("Lupa detail informasi masuk Anda? <b>Dapatkan bantuan untuk masuk.</b>"));
         tvRegister.setText(Html.fromHtml("Tidak punya akun? <b>Buat Akun.</b>"));
+        progressBar = findViewById(R.id.progress_bar);
+        progressBar.setVisibility(View.INVISIBLE);
     }
 
     private void initAction(){
@@ -109,14 +94,30 @@ public class LoginActivity extends AppCompatActivity {
         btLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(loginService.doLogin(tfUsername.getText().toString(), tfPassword.getText().toString())){
-                    Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
-                    LoginActivity.this.finish();
-                } else {
-                    Toast.makeText(getApplicationContext(), "Username atau password salah", Toast.LENGTH_SHORT).show();
-                }
+                System.out.println("btLogin.setOnClickListener ---");
+                progressBar.setVisibility(View.VISIBLE);
+                btLogin.setEnabled(false);
+                new AsyncTask<Void,Void,Void>(){
+                    //The variables you need to set go here
+                    @Override
+                    protected Void doInBackground(final Void... params){
+                        if(loginService.doLogin(tfUsername.getText().toString(), tfPassword.getText().toString())){
+                            Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(intent);
+                            LoginActivity.this.finish();
+                        } else {
+                            Toast.makeText(getApplicationContext(), "Username atau password salah", Toast.LENGTH_SHORT).show();
+                        }
+                        return null;
+                    }
+                    @Override
+                    protected void onPostExecute(final Void result){
+                        progressBar.setVisibility(View.INVISIBLE);
+                        btLogin.setEnabled(true);
+                    }
+                }.execute();
+
             }
         });
     }

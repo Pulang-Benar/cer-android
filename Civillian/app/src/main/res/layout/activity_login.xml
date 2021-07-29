@@ -45,6 +45,13 @@
         android:layout_height="wrap_content"
         android:text="Show password"
         android:textSize="9dp"/>
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:indeterminate="false"/>
     <Button
         android:layout_width="300dp"
         android:layout_height="wrap_content"
