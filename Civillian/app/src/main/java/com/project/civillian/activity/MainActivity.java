@@ -73,8 +73,8 @@ public class MainActivity extends AppCompatActivity {
                         System.out.println("civil = "+civil.getUsername());
                         if(civil.getUsername() != null) {
                             System.out.println("civil not null "+civil.getUsername());
-//                            if(loginService.doLogin(civil.getUsername(), civil.getPassword())){
-                            if(true){
+                            if(loginService.doLogin(civil.getUsername(), civil.getPassword())){
+//                            if(true){
                                 Intent intent = new Intent(MainActivity.this, HomeActivity.class);
                                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                                 startActivity(intent);
