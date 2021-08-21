@@ -52,8 +52,6 @@ public class RegisterActivity extends AppCompatActivity {
         if(civil != null) initUserLogin();
     }
 
-
-
     private void initComponent(){
         tfNik = findViewById(R.id.tf_nik);
         tfNama = findViewById(R.id.tf_nama);

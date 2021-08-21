@@ -47,7 +47,7 @@ public class CameraActivity extends AppCompatActivity {
     CivilService civilService;
     Civil civil;
     PanicService panicService;
-    String fileName, alamatLengkap="";
+    String fileName, alamatLengkap = "";
     private Double longitude, latitude;
     private Boolean isImageUploaded, isVidioUploaded, isSoundUploaded;
 
@@ -67,17 +67,17 @@ public class CameraActivity extends AppCompatActivity {
         initComponent();
         initAction();
 
-        if(checkPermission()){
+        if (checkPermission()) {
             getLatLong();
         }
     }
 
-    private void initComponent(){
+    private void initComponent() {
         tvNameDixplay = findViewById(R.id.tv_nameDisplay);
-        if(civil != null){
+        if (civil != null) {
             String nama = civil.getNama() != null && !"".equals(civil.getNama()) ? civil.getNama() : civil.getUsername();
             String nik = civil.getNik() != null && !"".equals(civil.getNik()) ? civil.getNik() : "Mohon lengkapi NIK";
-            String tDisp = nama+"\n"+nik;
+            String tDisp = nama + "\n" + nik;
             tvNameDixplay.setText(tDisp);
         }
         btCamera = (Button) findViewById(R.id.bt_camera);
@@ -85,7 +85,7 @@ public class CameraActivity extends AppCompatActivity {
         ivCamera = (ImageView) findViewById(R.id.iv_camera);
     }
 
-    private void initAction(){
+    private void initAction() {
         btCamera.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -97,8 +97,8 @@ public class CameraActivity extends AppCompatActivity {
         btSendCamera.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                System.out.println("filePath -> "+getExternalCacheDir().getAbsolutePath()+fileName);
-                if(panicService.doPanic(new Incident(fileName, latitude, longitude, getApplicationContext()), getExternalCacheDir().getAbsolutePath()+fileName)){
+                System.out.println("filePath -> " + getExternalCacheDir().getAbsolutePath() + fileName);
+                if (panicService.doPanic(new Incident(fileName, latitude, longitude, getApplicationContext()), getExternalCacheDir().getAbsolutePath() + fileName)) {
                     Toast.makeText(getApplicationContext(), "Berhasil mengunggah foto", Toast.LENGTH_SHORT).show();
                     System.out.println("SUCCESS CALL DO PANIC - IMAGE UPLOAD");
                     isImageUploaded = true;
@@ -125,13 +125,13 @@ public class CameraActivity extends AppCompatActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
-            case(CAMERA_REQUEST_CODE) :
-                if(resultCode == Activity.RESULT_OK) {
+            case (CAMERA_REQUEST_CODE):
+                if (resultCode == Activity.RESULT_OK) {
                     Bitmap bitmap;
                     bitmap = (Bitmap) data.getExtras().get("data");
-                    fileName = "/img-"+new SimpleDateFormat("yyyyMMdd-HHmmss").format(new Date())+".jpg";
-                    System.out.println("SAVING IMAGE TO... "+getExternalCacheDir().getAbsolutePath()+fileName);
-                    File pictureFile = new File(getExternalCacheDir().getAbsolutePath()+fileName);
+                    fileName = "/img-" + new SimpleDateFormat("yyyyMMdd-HHmmss").format(new Date()) + ".jpg";
+                    System.out.println("SAVING IMAGE TO... " + getExternalCacheDir().getAbsolutePath() + fileName);
+                    File pictureFile = new File(getExternalCacheDir().getAbsolutePath() + fileName);
                     try {
                         FileOutputStream fos = new FileOutputStream(pictureFile);
                         bitmap.compress(Bitmap.CompressFormat.PNG, 90, fos);
@@ -150,27 +150,27 @@ public class CameraActivity extends AppCompatActivity {
         }
     }
 
-    private void getExtras(){
-        if(getIntent() != null){
-            Bundle bundle=getIntent().getExtras();
-            if(bundle != null){
+    private void getExtras() {
+        if (getIntent() != null) {
+            Bundle bundle = getIntent().getExtras();
+            if (bundle != null) {
                 isImageUploaded = bundle.getBoolean("isImageUploaded");
                 isVidioUploaded = bundle.getBoolean("isVidioUploaded");
                 isSoundUploaded = bundle.getBoolean("isSoundUploaded");
                 alamatLengkap = bundle.getString("alamatLengkap");
             }
         }
-        System.out.println("CameraActivity isImageUploaded="+isImageUploaded+", isVidioUploaded="+isVidioUploaded+", isSoundUploaded="+isSoundUploaded);
+        System.out.println("CameraActivity isImageUploaded=" + isImageUploaded + ", isVidioUploaded=" + isVidioUploaded + ", isSoundUploaded=" + isSoundUploaded);
     }
 
-    private void getLatLong(){
+    private void getLatLong() {
         final Map<String, Double> result = new HashMap<>();
         FusedLocationProviderClient mFusedLocation = LocationServices.getFusedLocationProviderClient(this);
         mFusedLocation.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
             @Override
             public void onSuccess(Location location) {
-                if (location != null){
-                    System.out.println("latitude="+location.getLatitude()+", longitude="+location.getLongitude());
+                if (location != null) {
+                    System.out.println("latitude=" + location.getLatitude() + ", longitude=" + location.getLongitude());
                     latitude = location.getLatitude();
                     longitude = location.getLongitude();
                 }

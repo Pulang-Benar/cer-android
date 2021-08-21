@@ -70,19 +70,22 @@ public class MainActivity extends AppCompatActivity {
                     //The variables you need to set go here
                     @Override
                     protected Void doInBackground(final Void... params){
+                        System.out.println("civil = "+civil.getUsername());
                         if(civil.getUsername() != null) {
-                            if(loginService.doLogin(civil.getUsername(), civil.getPassword())){
+                            System.out.println("civil not null "+civil.getUsername());
+//                            if(loginService.doLogin(civil.getUsername(), civil.getPassword())){
+                            if(true){
                                 Intent intent = new Intent(MainActivity.this, HomeActivity.class);
                                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                                 startActivity(intent);
                                 MainActivity.this.finish();
                             }
+                        } else {
+                            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(intent);
+                            MainActivity.this.finish();
                         }
-
-                        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(intent);
-                        MainActivity.this.finish();
                         return null;
                     }
                     @Override

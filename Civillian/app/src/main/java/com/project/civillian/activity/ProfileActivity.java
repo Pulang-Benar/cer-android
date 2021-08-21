@@ -13,9 +13,12 @@ import android.content.Intent;
 import android.location.Address;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.method.HideReturnsTransformationMethod;
+import android.text.method.PasswordTransformationMethod;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -32,6 +35,7 @@ public class ProfileActivity extends AppCompatActivity {
     private DatePickerDialog datePickerDialog;
     private CivilService civilService;
     private Civil civil;
+    private CheckBox showPassword;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +68,7 @@ public class ProfileActivity extends AppCompatActivity {
         tfRePassword = findViewById(R.id.tf_password_retype);
         btSimpan = findViewById(R.id.bt_simpan);
         btKembali = findViewById(R.id.bt_kembali);
+        showPassword = findViewById(R.id.show_password);
     }
 
     private void initUserLogin(){
@@ -113,6 +118,18 @@ public class ProfileActivity extends AppCompatActivity {
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
                 ProfileActivity.this.finish();
+            }
+        });
+        showPassword.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked){
+                    tfPassword.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+                    tfRePassword.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+                } else {
+                    tfPassword.setTransformationMethod(PasswordTransformationMethod.getInstance());
+                    tfRePassword.setTransformationMethod(PasswordTransformationMethod.getInstance());
+                }
             }
         });
     }
